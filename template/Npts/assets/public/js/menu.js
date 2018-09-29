@@ -1,5 +1,5 @@
 /* TYPE YOUR JAVA SCRIPT HERE */
-var head_url='http://dev110.weibanker.cn/liwenjian/www/vatc/';
+var head_url='http://masswise.m89520.com/bst/';
 var self_url=window.location.href;
 $.get(head_url+'adminapi.html?url=admin_menu').success(function(data){
     var b='';

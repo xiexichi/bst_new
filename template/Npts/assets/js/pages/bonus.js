@@ -86,12 +86,15 @@ function in_callback(data){
 		for(var i=0;i<length;i++){
 				b+='<tr>';
 				b+='<td>'+(i+1)+'</td>';
-				b+='<td>'+data.data[i]['eos']+'</td>';
-				b+='<td>'+data.data[i]['card']+'</td>';
-				b+='<td>'+data.data[i]['finally']+'</td>';
+				b+='<td>'+data.data[i]['give']+'%</td>';
+				b+='<td>'+data.data[i]['finally']+'%</td>';
 				b+='<td>'+data.data[i]['everyday']+'%</td>';
-				b+='<td>'+data.data[i]['veth']+'%</td>';
 				b+='<td>'+data.data[i]['spread']+'%</td>';
+				if(data.data[i]['burn']==1){
+					b+='<td>是</td>';
+				}else{
+					b+='<td>否</td>';
+				}
 				b+='<td>';
 				b+='<a href="'+head_url+'works/activate.html?id='+data.data[i]['id']+'" class=" bk-fg-darken"><small>详情</small> <i class="fa  fa-pencil"></i></a>';
 				b+='</td>';

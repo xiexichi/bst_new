@@ -187,76 +187,12 @@
 							<h2>推广设置</h2>
 						</div>					
 					</div>
-					<!-- End Page Header -->					
-		
-					<div class="row">
-						<div class="col-md-12">
-							<div class="panel">
-								<div class="panel-heading bk-bg-primary">
-									<h6><i class="fa fa-indent red"></i>基础设置</h6>							
-								</div>
-								<div class="panel-body">
-									<form action="" method="post" enctype="multipart/form-data" class="form-horizontal myform1">
-										
-										<div class="form-group">								
-											<label class="col-md-3 control-label">激活卡价格</label>
-											<div class="col-md-6">
-											<div class="input-group col-sm-6">
-													
-													<input type="text"  class="form-control  must float" name="ACT_VETH" value="[{:C('ACT_VETH')}]" placeholder="请输入激活卡价格" /><span class="input-group-addon">VETH</span>
-												</div>
-												<span class="help-block hide"></span>
-										</div>
-									</div>
-										<div class="form-group">								
-											<label class="col-md-3 control-label">EOS钱包地址</label>
-											<div class="col-md-6">
-											<div class="input-group col-sm-6">
-													
-													<input type="text"  class="form-control  must" name="EOS_ADDRESS" value="[{:C('EOS_ADDRESS')}]" placeholder="请输入EOS钱包地址" />
-												</div>
-												<span class="help-block hide"></span>
-										</div>
-									</div>
-									<div class="form-group">								
-											<label class="col-md-3 control-label">注册红包</label>
-											<div class="col-md-6">
-											<div class="input-group col-sm-6">
-													
-													<input type="text"  class="form-control  must float" name="REGISTER_BONUS" value="[{:C('REGISTER_BONUS')}]" placeholder="请输入注册红包" /><span class="input-group-addon">EOS</span>
-												</div>
-												<span class="help-block hide"></span>
-										</div>
-									</div>
-									<div class="form-group">								
-											<label class="col-md-3 control-label">签到奖励</label>
-											<div class="col-md-6">
-											<div class="input-group col-sm-6">
-													
-													<input type="text"  class="form-control  must float" name="SIGNIN_BONUS" value="[{:C('SIGNIN_BONUS')}]" placeholder="请输入签到奖励" /><span class="input-group-addon">EOS</span>
-												</div>
-												<span class="help-block hide"></span>
-										</div>
-									</div>
-									
-									<div class="form-group">								
-											<label class="col-md-3 control-label"></label>
-									<div class="col-md-9">
-									<a href="adminapi.html?url=admin_bonus_config" class="btn btn-success ajax-post"  target-form="myform1" callback="edit_callback">确认提交</a>
-									<div class="radio-custom radio-inline"></div>
-									
-									</div>
-								</div>
-									</form>
-								</div>	
-							</div>	
-						</div>					
-					</div>					   
+					<!-- End Page Header -->						   
 					<div class="row">
 						<div class="col-lg-12">                           
 							<div class="panel">                                
 								<div class="panel-heading bk-bg-primary">
-									<h6><i class="fa fa-table red"></i><span class="break"></span>激活设置</h6>
+									<h6><i class="fa fa-table red"></i><span class="break"></span>投BST设置</h6>
 									<a class="btn btn-primary ajax-get hide" href="adminapi.html?url=admin_activate_setup_list" id="in-list-click" callback="in_callback">查 询</a>
 								</div>										
 								<div class="panel-body">
@@ -267,12 +203,11 @@
 													<th>
 														#
 													</th>
-													<th>所需eos的数量</th>
-													<th>所需激活卡数量</th>
-													<th>最终获得eos数量</th>
+													<th>赠送比例</th>
+													<th>最终获得比例</th>
 													<th>每日释放率</th>
-													<th>veth释放率</th>
 													<th>直推分红比例</th>
+													<th>是否烧伤</th>
 													<th>操作</th>
 												</tr>
 											</thead>

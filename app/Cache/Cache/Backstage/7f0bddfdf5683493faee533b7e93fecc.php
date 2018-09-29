@@ -15,43 +15,43 @@
         
         
 		<!-- Favicon and touch icons -->
-		<link rel="shortcut icon" href="/liwenjian/www/vatc/template/Npts/assets/ico/favicon.ico" type="image/x-icon" />
-		<link rel="apple-touch-icon" href="/liwenjian/www/vatc/template/Npts/assets/ico/apple-touch-icon.png" />
-		<link rel="apple-touch-icon" sizes="57x57" href="/liwenjian/www/vatc/template/Npts/assets/ico/apple-touch-icon-57x57.png" />
-		<link rel="apple-touch-icon" sizes="72x72" href="/liwenjian/www/vatc/template/Npts/assets/ico/apple-touch-icon-72x72.png" />
-		<link rel="apple-touch-icon" sizes="76x76" href="/liwenjian/www/vatc/template/Npts/assets/ico/apple-touch-icon-76x76.png" />
-		<link rel="apple-touch-icon" sizes="114x114" href="/liwenjian/www/vatc/template/Npts/assets/ico/apple-touch-icon-114x114.png" />
-		<link rel="apple-touch-icon" sizes="120x120" href="/liwenjian/www/vatc/template/Npts/assets/ico/apple-touch-icon-120x120.png" />
-		<link rel="apple-touch-icon" sizes="144x144" href="/liwenjian/www/vatc/template/Npts/assets/ico/apple-touch-icon-144x144.png" />
-		<link rel="apple-touch-icon" sizes="152x152" href="/liwenjian/www/vatc/template/Npts/assets/ico/apple-touch-icon-152x152.png" />
+		<link rel="shortcut icon" href="/bst/template/Npts/assets/ico/favicon.ico" type="image/x-icon" />
+		<link rel="apple-touch-icon" href="/bst/template/Npts/assets/ico/apple-touch-icon.png" />
+		<link rel="apple-touch-icon" sizes="57x57" href="/bst/template/Npts/assets/ico/apple-touch-icon-57x57.png" />
+		<link rel="apple-touch-icon" sizes="72x72" href="/bst/template/Npts/assets/ico/apple-touch-icon-72x72.png" />
+		<link rel="apple-touch-icon" sizes="76x76" href="/bst/template/Npts/assets/ico/apple-touch-icon-76x76.png" />
+		<link rel="apple-touch-icon" sizes="114x114" href="/bst/template/Npts/assets/ico/apple-touch-icon-114x114.png" />
+		<link rel="apple-touch-icon" sizes="120x120" href="/bst/template/Npts/assets/ico/apple-touch-icon-120x120.png" />
+		<link rel="apple-touch-icon" sizes="144x144" href="/bst/template/Npts/assets/ico/apple-touch-icon-144x144.png" />
+		<link rel="apple-touch-icon" sizes="152x152" href="/bst/template/Npts/assets/ico/apple-touch-icon-152x152.png" />
 		
 	    <!-- start: CSS file-->
 		
 		<!-- Vendor CSS-->
-		<link href="/liwenjian/www/vatc/template/Npts/assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
-		<link href="/liwenjian/www/vatc/template/Npts/assets/vendor/skycons/css/skycons.css" rel="stylesheet" />
-		<link href="/liwenjian/www/vatc/template/Npts/assets/vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
+		<link href="/bst/template/Npts/assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+		<link href="/bst/template/Npts/assets/vendor/skycons/css/skycons.css" rel="stylesheet" />
+		<link href="/bst/template/Npts/assets/vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
 		
 		<!-- Plugins CSS-->		
-		<link href="/liwenjian/www/vatc/template/Npts/assets/plugins/bootkit/css/bootkit.css" rel="stylesheet" />	
-		<link href="/liwenjian/www/vatc/template/Npts/assets/plugins/scrollbar/css/mCustomScrollbar.css" rel="stylesheet" />
-		<link href="/liwenjian/www/vatc/template/Npts/assets/plugins/fullcalendar/css/fullcalendar.css" rel="stylesheet" />
-		<link href="/liwenjian/www/vatc/template/Npts/assets/plugins/jquery-ui/css/jquery-ui-1.10.4.min.css" rel="stylesheet" />
-		<link href="/liwenjian/www/vatc/template/Npts/assets/plugins/xcharts/css/xcharts.min.css" rel="stylesheet" />
-		<link href="/liwenjian/www/vatc/template/Npts/assets/plugins/morris/css/morris.css" rel="stylesheet" />
+		<link href="/bst/template/Npts/assets/plugins/bootkit/css/bootkit.css" rel="stylesheet" />	
+		<link href="/bst/template/Npts/assets/plugins/scrollbar/css/mCustomScrollbar.css" rel="stylesheet" />
+		<link href="/bst/template/Npts/assets/plugins/fullcalendar/css/fullcalendar.css" rel="stylesheet" />
+		<link href="/bst/template/Npts/assets/plugins/jquery-ui/css/jquery-ui-1.10.4.min.css" rel="stylesheet" />
+		<link href="/bst/template/Npts/assets/plugins/xcharts/css/xcharts.min.css" rel="stylesheet" />
+		<link href="/bst/template/Npts/assets/plugins/morris/css/morris.css" rel="stylesheet" />
 		
 		<!-- Theme CSS -->
-		<link href="/liwenjian/www/vatc/template/Npts/assets/css/jquery.mmenu.css" rel="stylesheet" />
+		<link href="/bst/template/Npts/assets/css/jquery.mmenu.css" rel="stylesheet" />
 		
 		<!-- Page CSS -->		
-		<link href="/liwenjian/www/vatc/template/Npts/assets/css/style.css" rel="stylesheet" />
-		<link href="/liwenjian/www/vatc/template/Npts/assets/css/add-ons.min.css" rel="stylesheet" />
+		<link href="/bst/template/Npts/assets/css/style.css" rel="stylesheet" />
+		<link href="/bst/template/Npts/assets/css/add-ons.min.css" rel="stylesheet" />
 		
 		<!-- end: CSS file-->	
 	    
 		
 		<!-- Head Libs -->
-		<script src="/liwenjian/www/vatc/template/Npts/assets/plugins/modernizr/js/modernizr.js"></script>
+		<script src="/bst/template/Npts/assets/plugins/modernizr/js/modernizr.js"></script>
 		
 		<!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
 		<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -129,7 +129,7 @@
 					<div class="sidebar-collapse">
 						<!-- Sidebar Header Logo-->
 						<div class="sidebar-header">
-							<img src="/liwenjian/www/vatc/template/Npts/assets/img/logo.png" class="img-responsive" alt="" />
+							<img src="/bst/template/Npts/assets/img/logo.png" class="img-responsive" alt="" />
 						</div>
 						<!-- Sidebar Menu-->
 						<div class="sidebar-menu">						
@@ -360,43 +360,43 @@
 		<!-- start: JavaScript-->
 		
 		<!-- Vendor JS-->				
-		<script src="/liwenjian/www/vatc/template/Npts/assets/vendor/js/jquery.min.js"></script>
-		<script src="/liwenjian/www/vatc/template/Npts/assets/vendor/js/jquery-2.1.1.min.js"></script>
-		<script src="/liwenjian/www/vatc/template/Npts/assets/vendor/js/jquery-migrate-1.2.1.min.js"></script>
-		<script src="/liwenjian/www/vatc/template/Npts/assets/vendor/bootstrap/js/bootstrap.min.js"></script>
-		<script src="/liwenjian/www/vatc/template/Npts/assets/vendor/skycons/js/skycons.js"></script>	
-		<script src="/liwenjian/www/vatc/template/Npts/assets/public/js/menu.js?v=1.1"></script>		
+		<script src="/bst/template/Npts/assets/vendor/js/jquery.min.js"></script>
+		<script src="/bst/template/Npts/assets/vendor/js/jquery-2.1.1.min.js"></script>
+		<script src="/bst/template/Npts/assets/vendor/js/jquery-migrate-1.2.1.min.js"></script>
+		<script src="/bst/template/Npts/assets/vendor/bootstrap/js/bootstrap.min.js"></script>
+		<script src="/bst/template/Npts/assets/vendor/skycons/js/skycons.js"></script>	
+		<script src="/bst/template/Npts/assets/public/js/menu.js?v=1.1"></script>		
 		
 		<!-- Plugins JS-->		
-		<script src="/liwenjian/www/vatc/template/Npts/assets/plugins/jquery-ui/js/jquery-ui-1.10.4.min.js"></script>
-		<script src="/liwenjian/www/vatc/template/Npts/assets/plugins/scrollbar/js/jquery.mCustomScrollbar.concat.min.js"></script>
-		<script src="/liwenjian/www/vatc/template/Npts/assets/plugins/moment/js/moment.min.js"></script>	
-		<script src="/liwenjian/www/vatc/template/Npts/assets/plugins/fullcalendar/js/fullcalendar.min.js"></script>
-		<script src="/liwenjian/www/vatc/template/Npts/assets/plugins/touchpunch/js/jquery.ui.touch-punch.min.js"></script>
-		<script src="/liwenjian/www/vatc/template/Npts/assets/plugins/flot/js/jquery.flot.min.js"></script>
-		<script src="/liwenjian/www/vatc/template/Npts/assets/plugins/flot/js/jquery.flot.pie.min.js"></script>
-		<script src="/liwenjian/www/vatc/template/Npts/assets/plugins/flot/js/jquery.flot.resize.min.js"></script>
-		<script src="/liwenjian/www/vatc/template/Npts/assets/plugins/flot/js/jquery.flot.stack.min.js"></script>
-		<script src="/liwenjian/www/vatc/template/Npts/assets/plugins/flot/js/jquery.flot.time.min.js"></script>
-		<script src="/liwenjian/www/vatc/template/Npts/assets/plugins/xcharts/js/xcharts.min.js"></script>
-		<script src="/liwenjian/www/vatc/template/Npts/assets/plugins/autosize/jquery.autosize.min.js"></script>
-		<script src="/liwenjian/www/vatc/template/Npts/assets/plugins/placeholder/js/jquery.placeholder.min.js"></script>
+		<script src="/bst/template/Npts/assets/plugins/jquery-ui/js/jquery-ui-1.10.4.min.js"></script>
+		<script src="/bst/template/Npts/assets/plugins/scrollbar/js/jquery.mCustomScrollbar.concat.min.js"></script>
+		<script src="/bst/template/Npts/assets/plugins/moment/js/moment.min.js"></script>	
+		<script src="/bst/template/Npts/assets/plugins/fullcalendar/js/fullcalendar.min.js"></script>
+		<script src="/bst/template/Npts/assets/plugins/touchpunch/js/jquery.ui.touch-punch.min.js"></script>
+		<script src="/bst/template/Npts/assets/plugins/flot/js/jquery.flot.min.js"></script>
+		<script src="/bst/template/Npts/assets/plugins/flot/js/jquery.flot.pie.min.js"></script>
+		<script src="/bst/template/Npts/assets/plugins/flot/js/jquery.flot.resize.min.js"></script>
+		<script src="/bst/template/Npts/assets/plugins/flot/js/jquery.flot.stack.min.js"></script>
+		<script src="/bst/template/Npts/assets/plugins/flot/js/jquery.flot.time.min.js"></script>
+		<script src="/bst/template/Npts/assets/plugins/xcharts/js/xcharts.min.js"></script>
+		<script src="/bst/template/Npts/assets/plugins/autosize/jquery.autosize.min.js"></script>
+		<script src="/bst/template/Npts/assets/plugins/placeholder/js/jquery.placeholder.min.js"></script>
 	
-		<script src="/liwenjian/www/vatc/template/Npts/assets/plugins/datatables/js/jquery.dataTables.min.js"></script>
-		<script src="/liwenjian/www/vatc/template/Npts/assets/plugins/raphael/js/raphael.min.js"></script>
-		<script src="/liwenjian/www/vatc/template/Npts/assets/plugins/morris/js/morris.min.js"></script>
-		<script src="/liwenjian/www/vatc/template/Npts/assets/plugins/gauge/js/gauge.min.js"></script>		
-		<script src="/liwenjian/www/vatc/template/Npts/assets/plugins/d3/js/d3.min.js"></script>		
+		<script src="/bst/template/Npts/assets/plugins/datatables/js/jquery.dataTables.min.js"></script>
+		<script src="/bst/template/Npts/assets/plugins/raphael/js/raphael.min.js"></script>
+		<script src="/bst/template/Npts/assets/plugins/morris/js/morris.min.js"></script>
+		<script src="/bst/template/Npts/assets/plugins/gauge/js/gauge.min.js"></script>		
+		<script src="/bst/template/Npts/assets/plugins/d3/js/d3.min.js"></script>		
 		
 		<!-- Theme JS -->
 
-		<script src="/liwenjian/www/vatc/template/Npts/assets/js/jquery.mmenu.min.js"></script>
-		<script src="/liwenjian/www/vatc/template/Npts/assets/js/core.min.js"></script>
+		<script src="/bst/template/Npts/assets/js/jquery.mmenu.min.js"></script>
+		<script src="/bst/template/Npts/assets/js/core.min.js"></script>
 		
 		<!-- Pages JS -->
 
-		<script src="/liwenjian/www/vatc/template/Npts/assets/public/js/ajax.js?v=1.1"></script>
-		<script src="/liwenjian/www/vatc/template/Npts/assets/js/pages/index.js"></script>
+		<script src="/bst/template/Npts/assets/public/js/ajax.js?v=1.1"></script>
+		<script src="/bst/template/Npts/assets/js/pages/index.js"></script>
 		<!-- end: JavaScript-->
 		
 	</body>

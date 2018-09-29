@@ -32,27 +32,21 @@ class ApiController extends Controller {
                 case 'get_mobile_massges':$this->get_mobile_massges($data);break;
                 case 'retrievePassword':$this->retrievePassword($data);break;
                 case 'getUserInfo':$this->getUserInfo($data);break;
-                case 'getPurseAddress':$this->getPurseAddress($data);break;
                 case 'uploadImages':$this->uploadImages($data);break;
                 case 'feedback':$this->feedback($data);break;
-                case 'signIn':$this->signIn($data);break;
-                case 'isSignIn':$this->isSignIn($data);break;
                 case 'pageIndex':$this->pageIndex($data);break; 
                 case 'activate':$this->activate($data);break;
-                case 'isActivate':$this->isActivate($data);break;
                 case 'pageMyFans':$this->pageMyFans($data);break;
                 case 'activateRecord':$this->activateRecord($data);break;
-                case 'exchangeCard':$this->exchangeCard($data);break;
                 case 'transaction':$this->transaction($data);break;
-                case 'profit':$this->profit($data);break;
                 case 'updateHead':$this->updateHead($data);break;
                 case 'pageAssets':$this->pageAssets($data);break;
-                case 'getUsableCoin':$this->getUsableCoin($data);break;
+                case 'getCoin':$this->getCoin($data);break;
+                
                 case 'assets':$this->assets($data);break;
                 case 'give':$this->give($data);break;
                 case 'systemBulletin':$this->systemBulletin($data);break;
                 case 'mail':$this->mail($data);break;
-                //case 'spread':$this->spread($data);break;
                 case 'rechange':$this->rechange($data);break;
                 case 'transfer':$this->transfer($data);break;
                 case 'rechangeRecord':$this->rechangeRecord($data);break;
@@ -109,12 +103,6 @@ class ApiController extends Controller {
         $return   = $Userapi->getUserInfo($data);
         $this->ajaxReturn($return,'ALL');
     }
-    protected function getPurseAddress($data){
-
-        $Userapi = new \Userapi;
-        $return   = $Userapi->getPurseAddress($data);
-        $this->ajaxReturn($return,'ALL');
-    }
     protected function uploadImages($data){
         $file = A('File');
         $return=$file->update();
@@ -126,25 +114,10 @@ class ApiController extends Controller {
         $return   = $Userapi->feedback($data);
         $this->ajaxReturn($return,'ALL');
     }
-    protected function signIn($data){
-        $Userapi = new \Userapi;
-        $return   = $Userapi->signIn($data);
-        $this->ajaxReturn($return,'ALL');
-    }
-    protected function isSignIn($data){
-        $Userapi = new \Userapi;
-        $return   = $Userapi->isSignIn($data);
-        $this->ajaxReturn($return,'ALL');
-    }
 
     protected function pageIndex($data){
         $Userapi = new \Userapi;
         $return   = $Userapi->pageIndex($data);
-        $this->ajaxReturn($return,'ALL');
-    }
-    protected function isActivate($data){
-        $Userapi = new \Userapi;
-        $return   = $Userapi->isActivate($data);
         $this->ajaxReturn($return,'ALL');
     }
     protected function activate($data){
@@ -162,19 +135,7 @@ class ApiController extends Controller {
         $return   = $Userapi->activateRecord($data);
         $this->ajaxReturn($return,'ALL');
     }
-    protected function exchangeCard($data){
-        $Userapi = new \Userapi;
-        $return   = $Userapi->exchangeCard($data);
-        $this->ajaxReturn($return,'ALL');
-    }
     protected function transaction($data){
-        $Userapi = new \Userapi;
-        $return   = $Userapi->transaction($data);
-        $this->ajaxReturn($return,'ALL');
-    }
-    protected function profit($data){
-        unset($data['coin_id']);
-        $data['type']="4";
         $Userapi = new \Userapi;
         $return   = $Userapi->transaction($data);
         $this->ajaxReturn($return,'ALL');
@@ -184,14 +145,9 @@ class ApiController extends Controller {
         $return   = $Userapi->updateHead($data);
         $this->ajaxReturn($return,'ALL');
     }
-    protected function pageAssets($data){
+    protected function getCoin($data){
         $Userapi = new \Userapi;
-        $return   = $Userapi->pageAssets($data);
-        $this->ajaxReturn($return,'ALL');
-    }
-    protected function getUsableCoin($data){
-        $Userapi = new \Userapi;
-        $return   = $Userapi->getUsableCoin($data);
+        $return   = $Userapi->getCoin($data);
         $this->ajaxReturn($return,'ALL');
     }
     protected function assets($data){
@@ -214,11 +170,6 @@ class ApiController extends Controller {
         $return   = $Userapi->mail($data);
         $this->ajaxReturn($return,'ALL');
     }
-    /*protected function spread($data){
-        $Userapi = new \Userapi;
-        $return   = $Userapi->_spreadBonus('20180905520798');
-        $this->ajaxReturn($return,'ALL');
-    }*/
     protected function rechange($data){
         $Userapi = new \Userapi;
         $return   = $Userapi->rechange($data);

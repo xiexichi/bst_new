@@ -16,43 +16,43 @@
         
         
 		<!-- Favicon and touch icons -->
-		<link rel="shortcut icon" href="/liwenjian/www/vatc/template/Npts/assets/ico/favicon.ico" type="image/x-icon" />
-		<link rel="apple-touch-icon" href="/liwenjian/www/vatc/template/Npts/assets/ico/apple-touch-icon.png" />
-		<link rel="apple-touch-icon" sizes="57x57" href="/liwenjian/www/vatc/template/Npts/assets/ico/apple-touch-icon-57x57.png" />
-		<link rel="apple-touch-icon" sizes="72x72" href="/liwenjian/www/vatc/template/Npts/assets/ico/apple-touch-icon-72x72.png" />
-		<link rel="apple-touch-icon" sizes="76x76" href="/liwenjian/www/vatc/template/Npts/assets/ico/apple-touch-icon-76x76.png" />
-		<link rel="apple-touch-icon" sizes="114x114" href="/liwenjian/www/vatc/template/Npts/assets/ico/apple-touch-icon-114x114.png" />
-		<link rel="apple-touch-icon" sizes="120x120" href="/liwenjian/www/vatc/template/Npts/assets/ico/apple-touch-icon-120x120.png" />
-		<link rel="apple-touch-icon" sizes="144x144" href="/liwenjian/www/vatc/template/Npts/assets/ico/apple-touch-icon-144x144.png" />
-		<link rel="apple-touch-icon" sizes="152x152" href="/liwenjian/www/vatc/template/Npts/assets/ico/apple-touch-icon-152x152.png" />
+		<link rel="shortcut icon" href="/bst/template/Npts/assets/ico/favicon.ico" type="image/x-icon" />
+		<link rel="apple-touch-icon" href="/bst/template/Npts/assets/ico/apple-touch-icon.png" />
+		<link rel="apple-touch-icon" sizes="57x57" href="/bst/template/Npts/assets/ico/apple-touch-icon-57x57.png" />
+		<link rel="apple-touch-icon" sizes="72x72" href="/bst/template/Npts/assets/ico/apple-touch-icon-72x72.png" />
+		<link rel="apple-touch-icon" sizes="76x76" href="/bst/template/Npts/assets/ico/apple-touch-icon-76x76.png" />
+		<link rel="apple-touch-icon" sizes="114x114" href="/bst/template/Npts/assets/ico/apple-touch-icon-114x114.png" />
+		<link rel="apple-touch-icon" sizes="120x120" href="/bst/template/Npts/assets/ico/apple-touch-icon-120x120.png" />
+		<link rel="apple-touch-icon" sizes="144x144" href="/bst/template/Npts/assets/ico/apple-touch-icon-144x144.png" />
+		<link rel="apple-touch-icon" sizes="152x152" href="/bst/template/Npts/assets/ico/apple-touch-icon-152x152.png" />
 		
 	    <!-- start: CSS file-->
 		
 		<!-- Vendor CSS-->
-		<link href="/liwenjian/www/vatc/template/Npts/assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
-		<link href="/liwenjian/www/vatc/template/Npts/assets/vendor/skycons/css/skycons.css" rel="stylesheet" />
-		<link href="/liwenjian/www/vatc/template/Npts/assets/vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
+		<link href="/bst/template/Npts/assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+		<link href="/bst/template/Npts/assets/vendor/skycons/css/skycons.css" rel="stylesheet" />
+		<link href="/bst/template/Npts/assets/vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
 		
 		<!-- Plugins CSS-->		
-		<link href="/liwenjian/www/vatc/template/Npts/assets/plugins/bootkit/css/bootkit.css" rel="stylesheet" />	
-		<link href="/liwenjian/www/vatc/template/Npts/assets/plugins/bootstrap-datepicker/css/datepicker3.css" rel="stylesheet" />
-		<link href="/liwenjian/www/vatc/template/Npts/assets/plugins/bootstrap-datepicker/css/datepicker-theme.css" rel="stylesheet" />
-		<link href="/liwenjian/www/vatc/template/Npts/assets/plugins/bootstrap-timepicker/css/bootstrap-timepicker.css" rel="stylesheet" />
-		<link href="/liwenjian/www/vatc/template/Npts/assets/plugins/bootstrap-colorpicker/css/bootstrap-colorpicker.css" rel="stylesheet" />
-		<link href="/liwenjian/www/vatc/template/Npts/assets/plugins/bootstrap-tagsinput/css/bootstrap-tagsinput.css" rel="stylesheet" />
+		<link href="/bst/template/Npts/assets/plugins/bootkit/css/bootkit.css" rel="stylesheet" />	
+		<link href="/bst/template/Npts/assets/plugins/bootstrap-datepicker/css/datepicker3.css" rel="stylesheet" />
+		<link href="/bst/template/Npts/assets/plugins/bootstrap-datepicker/css/datepicker-theme.css" rel="stylesheet" />
+		<link href="/bst/template/Npts/assets/plugins/bootstrap-timepicker/css/bootstrap-timepicker.css" rel="stylesheet" />
+		<link href="/bst/template/Npts/assets/plugins/bootstrap-colorpicker/css/bootstrap-colorpicker.css" rel="stylesheet" />
+		<link href="/bst/template/Npts/assets/plugins/bootstrap-tagsinput/css/bootstrap-tagsinput.css" rel="stylesheet" />
 		
 		<!-- Theme CSS -->
-		<link href="/liwenjian/www/vatc/template/Npts/assets/css/jquery.mmenu.css" rel="stylesheet" />
+		<link href="/bst/template/Npts/assets/css/jquery.mmenu.css" rel="stylesheet" />
 		
 		<!-- Page CSS -->		
-		<link href="/liwenjian/www/vatc/template/Npts/assets/css/style.css" rel="stylesheet" />
+		<link href="/bst/template/Npts/assets/css/style.css" rel="stylesheet" />
 		
 		
 		<!-- end: CSS file-->	
 	    
 		
 		<!-- Head Libs -->
-		<script src="/liwenjian/www/vatc/template/Npts/assets/plugins/modernizr/js/modernizr.js"></script>
+		<script src="/bst/template/Npts/assets/plugins/modernizr/js/modernizr.js"></script>
 		
 		<!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
 		<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -153,7 +153,7 @@
 					<div class="sidebar-collapse">
 						<!-- Sidebar Header Logo-->
 						<div class="sidebar-header">
-							<img src="/liwenjian/www/vatc/template/Npts/assets/img/logo.png" class="img-responsive" alt="" />
+							<img src="/bst/template/Npts/assets/img/logo.png" class="img-responsive" alt="" />
 						</div>
 						<!-- Sidebar Menu-->
 						<div class="sidebar-menu">						
@@ -187,76 +187,12 @@
 							<h2>推广设置</h2>
 						</div>					
 					</div>
-					<!-- End Page Header -->					
-		
-					<div class="row">
-						<div class="col-md-12">
-							<div class="panel">
-								<div class="panel-heading bk-bg-primary">
-									<h6><i class="fa fa-indent red"></i>基础设置</h6>							
-								</div>
-								<div class="panel-body">
-									<form action="" method="post" enctype="multipart/form-data" class="form-horizontal myform1">
-										
-										<div class="form-group">								
-											<label class="col-md-3 control-label">激活卡价格</label>
-											<div class="col-md-6">
-											<div class="input-group col-sm-6">
-													
-													<input type="text"  class="form-control  must float" name="ACT_VETH" value="<?php echo C('ACT_VETH');?>" placeholder="请输入激活卡价格" /><span class="input-group-addon">VETH</span>
-												</div>
-												<span class="help-block hide"></span>
-										</div>
-									</div>
-										<div class="form-group">								
-											<label class="col-md-3 control-label">EOS钱包地址</label>
-											<div class="col-md-6">
-											<div class="input-group col-sm-6">
-													
-													<input type="text"  class="form-control  must" name="EOS_ADDRESS" value="<?php echo C('EOS_ADDRESS');?>" placeholder="请输入EOS钱包地址" />
-												</div>
-												<span class="help-block hide"></span>
-										</div>
-									</div>
-									<div class="form-group">								
-											<label class="col-md-3 control-label">注册红包</label>
-											<div class="col-md-6">
-											<div class="input-group col-sm-6">
-													
-													<input type="text"  class="form-control  must float" name="REGISTER_BONUS" value="<?php echo C('REGISTER_BONUS');?>" placeholder="请输入注册红包" /><span class="input-group-addon">EOS</span>
-												</div>
-												<span class="help-block hide"></span>
-										</div>
-									</div>
-									<div class="form-group">								
-											<label class="col-md-3 control-label">签到奖励</label>
-											<div class="col-md-6">
-											<div class="input-group col-sm-6">
-													
-													<input type="text"  class="form-control  must float" name="SIGNIN_BONUS" value="<?php echo C('SIGNIN_BONUS');?>" placeholder="请输入签到奖励" /><span class="input-group-addon">EOS</span>
-												</div>
-												<span class="help-block hide"></span>
-										</div>
-									</div>
-									
-									<div class="form-group">								
-											<label class="col-md-3 control-label"></label>
-									<div class="col-md-9">
-									<a href="adminapi.html?url=admin_bonus_config" class="btn btn-success ajax-post"  target-form="myform1" callback="edit_callback">确认提交</a>
-									<div class="radio-custom radio-inline"></div>
-									
-									</div>
-								</div>
-									</form>
-								</div>	
-							</div>	
-						</div>					
-					</div>					   
+					<!-- End Page Header -->						   
 					<div class="row">
 						<div class="col-lg-12">                           
 							<div class="panel">                                
 								<div class="panel-heading bk-bg-primary">
-									<h6><i class="fa fa-table red"></i><span class="break"></span>激活设置</h6>
+									<h6><i class="fa fa-table red"></i><span class="break"></span>投BST设置</h6>
 									<a class="btn btn-primary ajax-get hide" href="adminapi.html?url=admin_activate_setup_list" id="in-list-click" callback="in_callback">查 询</a>
 								</div>										
 								<div class="panel-body">
@@ -267,12 +203,11 @@
 													<th>
 														#
 													</th>
-													<th>所需eos的数量</th>
-													<th>所需激活卡数量</th>
-													<th>最终获得eos数量</th>
+													<th>赠送比例</th>
+													<th>最终获得比例</th>
 													<th>每日释放率</th>
-													<th>veth释放率</th>
 													<th>直推分红比例</th>
+													<th>是否烧伤</th>
 													<th>操作</th>
 												</tr>
 											</thead>
@@ -407,32 +342,32 @@
 		<!-- start: JavaScript-->
 		
 		<!-- Vendor JS-->				
-		<script src="/liwenjian/www/vatc/template/Npts/assets/vendor/js/jquery.min.js"></script>
-		<script src="/liwenjian/www/vatc/template/Npts/assets/vendor/js/jquery-2.1.1.min.js"></script>
-		<script src="/liwenjian/www/vatc/template/Npts/assets/vendor/js/jquery-migrate-1.2.1.min.js"></script>
-		<script src="/liwenjian/www/vatc/template/Npts/assets/vendor/bootstrap/js/bootstrap.min.js"></script>
-		<script src="/liwenjian/www/vatc/template/Npts/assets/vendor/skycons/js/skycons.js"></script>
-		<script src="/liwenjian/www/vatc/template/Npts/assets/public/js/menu.js?v=1.1"></script>	
+		<script src="/bst/template/Npts/assets/vendor/js/jquery.min.js"></script>
+		<script src="/bst/template/Npts/assets/vendor/js/jquery-2.1.1.min.js"></script>
+		<script src="/bst/template/Npts/assets/vendor/js/jquery-migrate-1.2.1.min.js"></script>
+		<script src="/bst/template/Npts/assets/vendor/bootstrap/js/bootstrap.min.js"></script>
+		<script src="/bst/template/Npts/assets/vendor/skycons/js/skycons.js"></script>
+		<script src="/bst/template/Npts/assets/public/js/menu.js?v=1.1"></script>	
 		
 		<!-- Plugins JS-->
-		<script src="/liwenjian/www/vatc/template/Npts/assets/plugins/jquery-ui/js/jquery-ui-1.10.4.min.js"></script>
-		<script src="/liwenjian/www/vatc/template/Npts/assets/plugins/moment/js/moment.min.js"></script>	
-		<script src="/liwenjian/www/vatc/template/Npts/assets/plugins/fullcalendar/js/fullcalendar.min.js"></script>
-		<script src="/liwenjian/www/vatc/template/Npts/assets/plugins/touchpunch/js/jquery.ui.touch-punch.min.js"></script>		
-		<script src="/liwenjian/www/vatc/template/Npts/assets/plugins/bootstrap-datepicker/js/bootstrap-datepicker.js"></script>
-		<script src="/liwenjian/www/vatc/template/Npts/assets/plugins/bootstrap-timepicker/js/bootstrap-timepicker.js"></script>
-		<script src="/liwenjian/www/vatc/template/Npts/assets/plugins/bootstrap-colorpicker/js/bootstrap-colorpicker.js"></script>
-		<script src="/liwenjian/www/vatc/template/Npts/assets/plugins/bootstrap-tagsinput/js/bootstrap-tagsinput.js"></script>
-		<script src="/liwenjian/www/vatc/template/Npts/assets/plugins/maskedinput/js/jquery.maskedinput.js"></script>			
+		<script src="/bst/template/Npts/assets/plugins/jquery-ui/js/jquery-ui-1.10.4.min.js"></script>
+		<script src="/bst/template/Npts/assets/plugins/moment/js/moment.min.js"></script>	
+		<script src="/bst/template/Npts/assets/plugins/fullcalendar/js/fullcalendar.min.js"></script>
+		<script src="/bst/template/Npts/assets/plugins/touchpunch/js/jquery.ui.touch-punch.min.js"></script>		
+		<script src="/bst/template/Npts/assets/plugins/bootstrap-datepicker/js/bootstrap-datepicker.js"></script>
+		<script src="/bst/template/Npts/assets/plugins/bootstrap-timepicker/js/bootstrap-timepicker.js"></script>
+		<script src="/bst/template/Npts/assets/plugins/bootstrap-colorpicker/js/bootstrap-colorpicker.js"></script>
+		<script src="/bst/template/Npts/assets/plugins/bootstrap-tagsinput/js/bootstrap-tagsinput.js"></script>
+		<script src="/bst/template/Npts/assets/plugins/maskedinput/js/jquery.maskedinput.js"></script>			
 		
 		<!-- Theme JS -->		
-		<script src="/liwenjian/www/vatc/template/Npts/assets/js/jquery.mmenu.min.js"></script>
-		<script src="/liwenjian/www/vatc/template/Npts/assets/js/core.min.js"></script>
+		<script src="/bst/template/Npts/assets/js/jquery.mmenu.min.js"></script>
+		<script src="/bst/template/Npts/assets/js/core.min.js"></script>
 		
 		<!-- Pages JS -->
-		<script src="/liwenjian/www/vatc/template/Npts/assets/js/pages/form-elements.js"></script>
-		<script src="/liwenjian/www/vatc/template/Npts/assets/public/js/ajax.js"></script>
-		<script src="/liwenjian/www/vatc/template/Npts/assets/js/pages/bonus.js"></script>
+		<script src="/bst/template/Npts/assets/js/pages/form-elements.js"></script>
+		<script src="/bst/template/Npts/assets/public/js/ajax.js"></script>
+		<script src="/bst/template/Npts/assets/js/pages/bonus.js"></script>
 		
 		<!-- end: JavaScript-->
 		

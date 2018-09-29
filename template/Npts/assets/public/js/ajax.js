@@ -1,5 +1,5 @@
 /* TYPE YOUR JAVA SCRIPT HERE */
-var head_url='http://dev110.weibanker.cn/liwenjian/www/vatc/';
+var head_url='http://masswise.m89520.com/bst/';
 var blur=true;
 function form_input_check(ts){
 	var value=ts.val();
