@@ -1351,8 +1351,6 @@ class Userapi {
 		$where_data['userid']=$userid;
 		$member=M('member')->where($where_data)->getField('userid');
 		if($member){
-			
-			if($data['coin_id']){
 				$map['userid']=$userid;
 				$map['coin_id']=$data['coin_id'];
 				$res['total_num']=M('recharge')->where($map)->count('id');
@@ -1377,58 +1375,6 @@ class Userapi {
 		        $ret_arr['errmsg']='SUCCESS';
 		        $ret_arr['data']=$res;
 		        return $ret_arr;	
-				}
-				$res['list']=(array)$list;
-				$ret_arr['errno'] = '0';
-		        $ret_arr['errmsg']='SUCCESS';
-		        $ret_arr['data']=$res;
-		        return $ret_arr;	
-			}else{
-				$map['userid']=$userid;
-					$list=M('recharge')->where($map)->field('id,number,create_time,status')->order('create_time desc')->select();
-				if($list){
-					foreach ($list as $key => $value) {
-						$list[$key]['coin_id']=1;
-						$list[$key]['orderid']=$value['id'];
-						unset($list[$key]['id']);
-					}
-				}
-				unset($map);
-				$map['userid']=$userid;
-				$map['status']=1;
-				$map['coin_id']=2;
-				$list2=M('transaction')->where($map)->field('orderid,number,create_time')->order('create_time desc')->select();
-				if($list2){
-					foreach ($list2 as $key => $value) {
-						$list2[$key]['status']=2;
-						$list2[$key]['coin_id']=2;
-					}
-				}
-				$array=array_merge((array)$list,(array)$list2);
-				$array=list_sort_by($array,'create_time','desc');
-				$res['total_num']=count($array);
-				if(empty($res['total_num'])){
-					$res['total_num']=0;
-				}
-				if($data['page'] && $data['limit']){
-					$start=($data['page']-1)*$data['limit'];
-					$array=array_slice($array,$start,$data['limit']);
-					$res['page']=ceil($res['total_num']/$data['limit']);
-				}
-				
-				if($res['total_num']>0){
-					foreach ($array as $key => $value) {
-						$array[$key]['time']=time_format($value['create_time'],'Y-m-d H:i:s');
-						unset($array[$key]['create_time']);
-					}
-				}
-				$res['list']=(array)$array;
-				$ret_arr['errno'] = '0';
-		        $ret_arr['errmsg']='SUCCESS';
-		        $ret_arr['data']=$res;
-		        return $ret_arr;	
-			}
-	
 		}else{
 			$ret_arr['errno'] = '30002';
             $ret_arr['errmsg']='无效用户，请联系管理员';
