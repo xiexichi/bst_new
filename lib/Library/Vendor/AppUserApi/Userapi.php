@@ -462,7 +462,7 @@ class Userapi {
            		return $ret_arr;
 		}
 		$where_data['userid']=$userid;
-		$res=M('member')->where($where_data)->field('nickname,mobile,referee,activate,head_imgurl')->find();
+		$res=M('member')->where($where_data)->field('nickname,mobile,referee,head_imgurl')->find();
 		if($res){
 			if($res['referee']){
 			$res['renickname']='*'.mb_substr($this->_getMemberInfo($res['referee'],'nickname'),1);
@@ -963,14 +963,14 @@ class Userapi {
 		$member=M('member')->where($where_data)->find();
 		if($member){
 			$where_coin['status']=1;
-			$coin_list=M('coin')->where($where_coin)->field('name,exchange_rate,address,create_time')->select();
+			$coin_list=M('coin')->where($where_coin)->field('id,name,exchange_rate,address')->select();
 			foreach($coin_list as $key =>$value){
 				$where_user_coin['coin_id']=$value['id'];
 				$where_user_coin['userid']=$userid;
 				$number=M('member_coin')->where($where_user_coin)->getField('usable');
 				$number || $number='0.00';
 				$coin_list[$key]['usable']=$number;
-				$coin_list[$key]['create_time']=time_format($value['create_time']);
+				
 			}
 			$ret_arr         = array();
 			$ret_arr['errno'] = '0';
@@ -1009,26 +1009,16 @@ class Userapi {
 			if($code_check){
 				return $code_check;
 			}
-			$member_info=M('member_info')->where($where_data)->find();
+			$member_info=M('member')->where($where_data)->find();
 			if($data['coin_id']==1){
 				if($data['number']>$member_info['usable_eos']){
 					$ret_arr['errno'] = '30009';
            			$ret_arr['errmsg']='EOS余额不足';
            			return $ret_arr;
 				}
-				$add_transaction['surplus']=$member_info['usable_eos']-$data['number'];
-				$data_memberInfo['usable_eos']=$member_info['usable_eos']-$data['number'];
-				$data_memberInfo['lock_eos']=$member_info['lock_eos']+$data['number'];
-			}
-			if($data['coin_id']==2){
-				if($data['number']>$member_info['usable_veth']){
-					$ret_arr['errno'] = '30010';
-           			$ret_arr['errmsg']='小币余额不足';
-           			return $ret_arr;
-				}
-				$add_transaction['surplus']=$member_info['usable_veth']-$data['number'];
-				$data_memberInfo['usable_veth']=$member_info['usable_veth']-$data['number'];
-				$data_memberInfo['lock_veth']=$member_info['lock_veth']+$data['number'];
+				$add_transaction['surplus']=$member_info['usable']-$data['number'];
+				$data_memberInfo['usable']=$member_info['usable']-$data['number'];
+				$data_memberInfo['lock']=$member_info['lock']+$data['number'];
 			}
 			//1.新增提现订单（预）
 			$add_assets['userid']=$userid;
@@ -1039,6 +1029,7 @@ class Userapi {
 			$add_assets['status']=-1;
 			$add_assets['create_time']=time();
 			$add_assets['update_time']=time();
+			$add_assets['service']=$data['service'];
 			$sql_assets=M('assets')->add($add_assets);
 			//2.新增交易记录（预）
 			$add_transaction['userid']=$userid;
@@ -1053,7 +1044,7 @@ class Userapi {
 			$sql_transaction=M('transaction')->add($add_transaction);
 			if($sql_assets && $sql_transaction){
 					//锁定用户余额
-					$sql_memberInfo=M('member_info')->where($where_data)->setField($data_memberInfo);
+					$sql_memberInfo=M('member')->where($where_data)->setField($data_memberInfo);
 					if($sql_memberInfo){
 						$where_transaction['orderid']=$add_transaction['orderid'];
 						M('transaction')->where($where_transaction)->setField('status',1);
@@ -1087,10 +1078,10 @@ class Userapi {
 			"coin_id": 			币ID 		必填
 			"number": 			数量 		必填
 			"mobile": 			收货人手机 	必填
-			"name": 			收货人姓名 	必填
+			
 			"verification_code":手机验证码 	必填
 		*/
-		$keys=array('access_token','coin_id','number','mobile','name','verification_code');
+		$keys=array('access_token','coin_id','number','mobile','verification_code');
 		$check=$this->_check($data,$keys);
 		if($check){
 			return $check;
@@ -1118,45 +1109,25 @@ class Userapi {
 				$ret_arr['errmsg']='收币用户不存在';
 				return $ret_arr;
 			}
-			if($consignee['nickname']!=$data['name']){
-				$ret_arr         = array();
-				$ret_arr['errno'] = '30014';
-				$ret_arr['errmsg']='收币用户信息不匹配';
-				return $ret_arr;
-			}
 			$where_consignee['userid']=$consignee['userid'];
-			$member_info=M('member_info')->where($where_data)->find();
-			$consignee_info=M('member_info')->where($where_consignee)->find();
+			$member_info=M('member')->where($where_data)->find();
+			$consignee_info=M('member')->where($where_consignee)->find();
 			if($data['coin_id']==1){
 				if($data['number']>$member_info['usable_eos']){
 					$ret_arr['errno'] = '30009';
-           			$ret_arr['errmsg']='EOS余额不足';
+           			$ret_arr['errmsg']='余额不足';
            			return $ret_arr;
 				}
 				//发起用户
-				$member_transaction['surplus']=$member_info['usable_eos']-$data['number'];
-				$member_memberInfo['usable_eos']=$member_info['usable_eos']-$data['number'];
-				$member_memberInfo['lock_eos']=$member_info['lock_eos']+$data['number'];
+				$member_transaction['surplus']=$member_info['usable']-$data['number'];
+				$member_memberInfo['usable']=$member_info['usable']-$data['number'];
+				$member_memberInfo['lock']=$member_info['lock']+$data['number'];
 				//收币用户
-				$consignee_transaction['surplus']=$consignee_info['usable_eos']+$data['number'];
-				$consignee_memberInfo['usable_eos']=$consignee_info['usable_eos']+$data['number'];
-				$consignee_memberInfo['total_eos']=$consignee_info['total_eos']+$data['number'];
+				$consignee_transaction['surplus']=$consignee_info['usable']+$data['number'];
+				$consignee_memberInfo['usable']=$consignee_info['usable']+$data['number'];
+				$consignee_memberInfo['total']=$consignee_info['total']+$data['number'];
 			}
-			if($data['coin_id']==2){
-				if($data['number']>$member_info['usable_veth']){
-					$ret_arr['errno'] = '30010';
-           			$ret_arr['errmsg']='小币余额不足';
-           			return $ret_arr;
-				}
-				//发起用户
-				$member_transaction['surplus']=$member_info['usable_veth']-$data['number'];
-				$member_memberInfo['usable_veth']=$member_info['usable_veth']-$data['number'];
-				$member_memberInfo['lock_veth']=$member_info['lock_veth']+$data['number'];
-				//收币用户
-				$consignee_transaction['surplus']=$consignee_info['usable_veth']+$data['number'];
-				$consignee_memberInfo['usable_veth']=$consignee_info['usable_veth']+$data['number'];
-				$consignee_memberInfo['total_veth']=$consignee_info['total_veth']+$data['number'];
-			}
+			
 			//1.新增转币订单（预）
 			$add_give['userid']=$userid;
 			$add_give['orderid']=get_orderid_chang('give');
@@ -1191,9 +1162,9 @@ class Userapi {
 			$sql_consignee=M('transaction')->add($consignee_transaction);
 			if($sql_give && $sql_consignee && $sql_member){
 					//锁定用户余额
-					$sql_memberInfo=M('member_info')->where($where_data)->setField($member_memberInfo);
+					$sql_memberInfo=M('member')->where($where_data)->setField($member_memberInfo);
 					if($sql_memberInfo){
-						$sql_memberInfo2=M('member_info')->where($where_consignee)->setField($consignee_memberInfo);
+						$sql_memberInfo2=M('member')->where($where_consignee)->setField($consignee_memberInfo);
 						if($sql_memberInfo2){
 							$where_transaction['orderid']=array('in',$consignee_transaction['orderid'].",".$member_transaction['orderid']);
 							M('transaction')->where($where_transaction)->setField('status',1);
@@ -1204,7 +1175,7 @@ class Userapi {
 							$ret_arr['errmsg']='SUCCESS';
 							return $ret_arr;
 						}else{
-							M('member_info')->where($where_data)->setField($member_info);
+							M('member')->where($where_data)->setField($member_info);
 							$ret_arr         = array();
 							$ret_arr['errno'] = '19998';
 							$ret_arr['errmsg']='系统级错误，请联系管理员';
@@ -1308,7 +1279,7 @@ class Userapi {
 			"voucher": 			凭证 		必填
 			"verification_code"	验证码		必填
 		*/
-		$keys=array('access_token','number','voucher','verification_code');
+		$keys=array('access_token','number','voucher','verification_code','coin_id');
 		$check=$this->_check($data,$keys);
 		if($check){
 			return $check;
@@ -1333,6 +1304,7 @@ class Userapi {
 			}
 			$add_recharge['number']=$data['number'];
 			$add_recharge['userid']=$userid;
+			$add_recharge['coin_id']=$data['coin_id'];
 			$add_recharge['voucher']=$data['voucher'];
 			$add_recharge['status']=1;
 			$add_recharge['create_time']=time();
@@ -1380,8 +1352,9 @@ class Userapi {
 		$member=M('member')->where($where_data)->getField('userid');
 		if($member){
 			
-			if($data['coin_id']==1){
+			if($data['coin_id']){
 				$map['userid']=$userid;
+				$map['coin_id']=$data['coin_id'];
 				$res['total_num']=M('recharge')->where($map)->count('id');
 				if(empty($res['total_num'])){
 					$res['total_num']=0;
@@ -1404,25 +1377,6 @@ class Userapi {
 		        $ret_arr['errmsg']='SUCCESS';
 		        $ret_arr['data']=$res;
 		        return $ret_arr;	
-			}else if($data['coin_id']==2){
-				$map['userid']=$userid;
-				$map['status']=1;
-				$map['coin_id']=2;
-				$res['total_num']=M('transaction')->where($map)->count('orderid');
-				if(empty($res['total_num'])){
-					$res['total_num']=0;
-				}
-				if($data['page'] && $data['limit']){
-					$list=M('transaction')->where($map)->field('orderid,number,DATE_FORMAT(FROM_UNIXTIME(create_time),"%Y-%m-%d %h:%i:%s") as time')->order('create_time desc')->page($data['page'],$data['limit'])->select();
-					$res['page']=ceil($res['total_num']/$data['limit']);
-				}else{
-					$list=M('transaction')->where($map)->field('orderid,number,DATE_FORMAT(FROM_UNIXTIME(create_time),"%Y-%m-%d %h:%i:%s") as time')->order('create_time desc')->select();
-					}
-				if($list){
-					foreach ($list as $key => $value) {
-						$list[$key]['status']=2;
-						$list[$key]['coin_id']=2;
-					}
 				}
 				$res['list']=(array)$list;
 				$ret_arr['errno'] = '0';
