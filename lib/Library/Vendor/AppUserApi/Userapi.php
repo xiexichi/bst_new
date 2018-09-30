@@ -590,7 +590,7 @@ class Userapi {
 			"number": 			投入数量 		必填
 			"service":			矿工费 		必填
 		*/
-		$keys=array('access_token','number','service');
+		$keys=array('access_token','number','service','verification_code');
 		$check=$this->_check($data,$keys);
 		if($check){
 			return $check;
@@ -1297,9 +1297,9 @@ class Userapi {
 			if($code_check){
 				return $code_check;
 			}
-			if($data['number']<10){
+			if($data['number']<0){
 				$ret_arr['errno'] = '30002';
-            	$ret_arr['errmsg']='充值必须大于10';
+            	$ret_arr['errmsg']='充值必须大于0';
            		return $ret_arr;
 			}
 			$add_recharge['number']=$data['number'];
@@ -1383,8 +1383,14 @@ class Userapi {
 		}
 		
 	}
-	public function cardMoney($data){
-            $keys=array('access_token');
+	public function exchange($data){
+		/*$data参数			
+			"access_token": 	登录凭证 		必填
+			"number": 			数值 		必填
+			"coin_id": 			币id 		必填
+			"verification_code"	验证码		必填
+		*/
+		$keys=array('access_token','number','verification_code','coin_id');
 		$check=$this->_check($data,$keys);
 		if($check){
 			return $check;
@@ -1395,781 +1401,185 @@ class Userapi {
             	$ret_arr['errmsg']='access_token不合法或已过期';
            		return $ret_arr;
 		}
-		$where_data['userid']=$userid;
-		$member=M('member')->where($where_data)->getField('userid');
-		if($member){
-            for ($i=4; $i>=0 ; $i--) { 
-                $map['year']=time_format(time()-(86400*$i),'Y');
-                $map['month']=time_format(time()-(86400*$i),'m');
-                $map['day']=time_format(time()-(86400*$i),'d');
-                $money=M('price')->where($map)->getField('money');
-                if(empty($money)){
-                    $map2['create_time']=array('lt',time()-(86400*$i));
-                    $money=M('price')->where($map2)->order('create_time desc')->getField('money');
-                }
-                if(empty($money)){
-                    $money=100;
-                }
-                $list[4-$i]['year']=$map['year'];
-                $list[4-$i]['month']=$map['month'];
-                $list[4-$i]['day']=$map['day'];
-                $list[4-$i]['money']=$money;
-                }
-                $ret_arr         = array();
-                $ret_arr['errno'] = '0';
-                $ret_arr['errmsg']='SUCCESS';
-                $ret_arr['data']=$list;
-               	return $ret_arr;    
-            
-    }else{
-			$ret_arr['errno'] = '30002';
-            $ret_arr['errmsg']='无效用户，请联系管理员';
-           	return $ret_arr;
-		}
-	}
-	public function todayCardMoney($data){
-            $keys=array('access_token');
-		$check=$this->_check($data,$keys);
-		if($check){
-			return $check;
-		}
-		$userid=$this->_memberAuth($data['access_token']);
-		if(!$userid){
-				$ret_arr['errno'] = '401';
-            	$ret_arr['errmsg']='access_token不合法或已过期';
-           		return $ret_arr;
-		}
-		$where_data['userid']=$userid;
-		$member=M('member')->where($where_data)->getField('userid');
-		if($member){
-            	$timePrice=$this->_getTimePrice();
-                $ret_arr         = array();
-                $ret_arr['errno'] = '0';
-                $ret_arr['errmsg']='SUCCESS';
-                $ret_arr['data']=$timePrice;
-               	return $ret_arr;    
-            
-    }else{
-			$ret_arr['errno'] = '30002';
-            $ret_arr['errmsg']='无效用户，请联系管理员';
-           	return $ret_arr;
-		}
-	}
-	
-	public function cardOrderIn($data){
-        $keys=array('access_token','number','verification_code');
-		$check=$this->_check($data,$keys);
-		if($check){
-			return $check;
-		}
-		$userid=$this->_memberAuth($data['access_token']);
-		if(!$userid){
-				$ret_arr['errno'] = '401';
-            	$ret_arr['errmsg']='access_token不合法或已过期';
-           		return $ret_arr;
-		}
-		$where_data['userid']=$userid;
-		$mobile=M('member')->where($where_data)->getField('mobile');
-		if($mobile){
-			$code_check=$this->_mobileCodeCheck($mobile,$data['verification_code']);
-			if($code_check){
-				return $code_check;
-			}
-			$member_info=M('member_info')->where($where_data)->find();
-			//获取时价
-			if((int)$data['number']<1){
-				$ret_arr['errno'] = '30015';
-           		$ret_arr['errmsg']='挂买数量必须大于或等于一';
-           		return $ret_arr;
-			}
-			$timePrice=$this->_getTimePrice();
-			$add_crad_order['tota_price']=(int)$data['number']*(float)$timePrice;
-			if($add_crad_order['tota_price']>$member_info['usable_veth']){
-				$ret_arr['errno'] = '30010';
-           		$ret_arr['errmsg']='VETH余额不足';
-           		return $ret_arr;
-			}
-			//1.新增挂买订单（预）
-			$add_crad_order['userid']=$userid;
-			$add_crad_order['orderid']=get_orderid_chang('crad_order');
-			$add_crad_order['number']=$data['number'];
-			$add_crad_order['time_price']=$timePrice;
-			$add_crad_order['release']=0;
-			$add_crad_order['surplus']=$data['number'];
-			$add_crad_order['surplus_price']=$add_crad_order['tota_price'];
-			$add_crad_order['status']=-1;
-			$add_crad_order['create_time']=time();
-			$add_crad_order['update_time']=time();
-			$add_crad_order['type']=1;
-			$sql_crad_order=M('crad_order')->add($add_crad_order);
-			//2.新增交易记录（预）
-			$add_transaction['userid']=$userid;
-			$add_transaction['orderid']=get_orderid_chang('transaction');
-			$add_transaction['coin_id']=2;
-			$add_transaction['number']=$add_crad_order['tota_price'];
-			$add_transaction['type']=7;
-			$add_transaction['plusminus']=-1;
-			$add_transaction['source']=$add_crad_order['orderid'];
-			$add_transaction['status']=-1;
-			$add_transaction['surplus']=$member_info['usable_veth']-$add_crad_order['tota_price'];
-			$add_transaction['create_time']=time();
-			$add_transaction['style']=1;
-			$sql_transaction=M('transaction')->add($add_transaction);
-			if($sql_crad_order && $sql_transaction){
-					//锁定用户余额
-					$data_memberInfo['usable_veth']=$member_info['usable_veth']-$add_crad_order['tota_price'];
-					$data_memberInfo['lock_veth']=$member_info['lock_veth']+$add_crad_order['tota_price'];
-					$sql_memberInfo=M('member_info')->where($where_data)->setField($data_memberInfo);
-					if($sql_memberInfo){
-						$where_transaction['orderid']=$add_transaction['orderid'];
-						M('transaction')->where($where_transaction)->setField('status',1);
-						$where_crad_order['orderid']=$add_crad_order['orderid'];
-						M('crad_order')->where($where_crad_order)->setField('status',1);
-						$ret_arr         = array();
-						$ret_arr['errno'] = '0';
-						$ret_arr['errmsg']='SUCCESS';
-						return $ret_arr;
-					}else{
-						$ret_arr         = array();
-						$ret_arr['errno'] = '19998';
-						$ret_arr['errmsg']='系统级错误，请联系管理员2';
-						return $ret_arr;	
-					}
-			}else{
-						$ret_arr         = array();
-						$ret_arr['errno'] = '19998';
-						$ret_arr['errmsg']='系统级错误，请联系管理员';
-						return $ret_arr;	
-			}		
-
-		}else{
-			$ret_arr['errno'] = '30002';
-            $ret_arr['errmsg']='无效用户，请联系管理员';
-           	return $ret_arr;
-		}
-	}
-	public function cardOrderOut($data){
-        $keys=array('access_token','number','verification_code');
-		$check=$this->_check($data,$keys);
-		if($check){
-			return $check;
-		}
-		$userid=$this->_memberAuth($data['access_token']);
-		if(!$userid){
-				$ret_arr['errno'] = '401';
-            	$ret_arr['errmsg']='access_token不合法或已过期';
-           		return $ret_arr;
-		}
-		$where_data['userid']=$userid;
-		$mobile=M('member')->where($where_data)->getField('mobile');
-		if($mobile){
-			$code_check=$this->_mobileCodeCheck($mobile,$data['verification_code']);
-			if($code_check){
-				return $code_check;
-			}
-			$member_info=M('member_info')->where($where_data)->find();
-			//获取时价
-			if((int)$data['number']<1){
-				$ret_arr['errno'] = '30015';
-           		$ret_arr['errmsg']='挂卖数量必须大于或等于一';
-           		return $ret_arr;
-			}
-			$timePrice=$this->_getTimePrice();
-			$add_crad_order['tota_price']=(int)$data['number']*(float)$timePrice;
-			if($data['number']>$member_info['usable_card']){
-				$ret_arr['errno'] = '30011';
-           		$ret_arr['errmsg']='激活卡不足';
-           		return $ret_arr;
-			}
-			//1.新增挂卖订单（预）
-			$add_crad_order['userid']=$userid;
-			$add_crad_order['orderid']=get_orderid_chang('crad_order');
-			$add_crad_order['number']=$data['number'];
-			$add_crad_order['time_price']=$timePrice;
-			$add_crad_order['release']=0;
-			$add_crad_order['surplus']=$data['number'];
-			$add_crad_order['surplus_price']=$add_crad_order['tota_price'];
-			$add_crad_order['status']=-1;
-			$add_crad_order['create_time']=time();
-			$add_crad_order['update_time']=time();
-			$add_crad_order['type']=2;
-			$sql_crad_order=M('crad_order')->add($add_crad_order);
-			if($sql_crad_order){
-					//锁定用户余额
-					$data_memberInfo['usable_card']=$member_info['usable_card']-$data['number'];
-					$data_memberInfo['lock_card']=$member_info['lock_card']+$data['number'];
-					$sql_memberInfo=M('member_info')->where($where_data)->setField($data_memberInfo);
-					if($sql_memberInfo){
-						$where_crad_order['orderid']=$add_crad_order['orderid'];
-						M('crad_order')->where($where_crad_order)->setField('status',1);
-						$ret_arr         = array();
-						$ret_arr['errno'] = '0';
-						$ret_arr['errmsg']='SUCCESS';
-						return $ret_arr;
-					}else{
-						$ret_arr         = array();
-						$ret_arr['errno'] = '19998';
-						$ret_arr['errmsg']='系统级错误，请联系管理员2';
-						return $ret_arr;	
-					}
-			}else{
-						$ret_arr         = array();
-						$ret_arr['errno'] = '19998';
-						$ret_arr['errmsg']='系统级错误，请联系管理员';
-						return $ret_arr;	
-			}		
-
-		}else{
-			$ret_arr['errno'] = '30002';
-            $ret_arr['errmsg']='无效用户，请联系管理员';
-           	return $ret_arr;
-		}
-	}
-	public function outList($data){
-        $keys=array('access_token');
-		$check=$this->_check($data,$keys);
-		if($check){
-			return $check;
-		}
-		$userid=$this->_memberAuth($data['access_token']);
-		if(!$userid){
-				$ret_arr['errno'] = '401';
-            	$ret_arr['errmsg']='access_token不合法或已过期';
-           		return $ret_arr;
-		}
-		$where_data['userid']=$userid;
-		$mobile=M('member')->where($where_data)->getField('mobile');
-		if($mobile){
-			$map['status']=1;
-			$map['type']=1;
-			$map['surplus']=array('gt',0);
-			$res['total_num']=M('crad_order')->where($map)->count('orderid');
-			if(empty($res['total_num'])){
-				$res['total_num']=0;
-			}
-			if($data['page'] && $data['limit']){
-					$list=M('crad_order')->where($map)->field('orderid,surplus,surplus_price,time_price')->order('create_time desc')->page($data['page'],$data['limit'])->select();
-					$res['page']=ceil($res['total_num']/$data['limit']);
-				}else{
-					$list=M('crad_order')->where($map)->field('orderid,surplus,surplus_price,time_price')->order('create_time desc')->select();
-					}
-				
-				$res['list']=(array)$list;
-				$ret_arr['errno'] = '0';
-		        $ret_arr['errmsg']='SUCCESS';
-		        $ret_arr['data']=$res;
-		        return $ret_arr;	
-		}else{
-			$ret_arr['errno'] = '30002';
-            $ret_arr['errmsg']='无效用户，请联系管理员';
-           	return $ret_arr;
-		}
-	}
-	public function inList($data){
-        $keys=array('access_token');
-		$check=$this->_check($data,$keys);
-		if($check){
-			return $check;
-		}
-		$userid=$this->_memberAuth($data['access_token']);
-		if(!$userid){
-				$ret_arr['errno'] = '401';
-            	$ret_arr['errmsg']='access_token不合法或已过期';
-           		return $ret_arr;
-		}
-		$where_data['userid']=$userid;
-		$mobile=M('member')->where($where_data)->getField('mobile');
-		if($mobile){
-			$map['status']=1;
-			$map['type']=2;
-			$map['surplus']=array('gt',0);
-			$res['total_num']=M('crad_order')->where($map)->count('orderid');
-			if(empty($res['total_num'])){
-				$res['total_num']=0;
-			}
-			if($data['page'] && $data['limit']){
-					$list=M('crad_order')->where($map)->field('orderid,surplus,surplus_price,time_price')->order('create_time desc')->page($data['page'],$data['limit'])->select();
-					$res['page']=ceil($res['total_num']/$data['limit']);
-				}else{
-					$list=M('crad_order')->where($map)->field('orderid,surplus,surplus_price,time_price')->order('create_time desc')->select();
-					}
-				
-				$res['list']=(array)$list;
-				$ret_arr['errno'] = '0';
-		        $ret_arr['errmsg']='SUCCESS';
-		        $ret_arr['data']=$res;
-		        return $ret_arr;	
-		}else{
-			$ret_arr['errno'] = '30002';
-            $ret_arr['errmsg']='无效用户，请联系管理员';
-           	return $ret_arr;
-		}
-	}
-	public function cardDeal($data){
-        $keys=array('access_token','number','orderid','verification_code');
-		$check=$this->_check($data,$keys);
-		if($check){
-			return $check;
-		}
-		$userid=$this->_memberAuth($data['access_token']);
-		if(!$userid){
-				$ret_arr['errno'] = '401';
-            	$ret_arr['errmsg']='access_token不合法或已过期';
-           		return $ret_arr;
-		}
-		$where_data['userid']=$userid;
-		$mobile=M('member')->where($where_data)->getField('mobile');
-		if($mobile){
-			$code_check=$this->_mobileCodeCheck($mobile,$data['verification_code']);
-			if($code_check){
-				return $code_check;
-			}
-			$member_info=M('member_info')->where($where_data)->find();
-			$where_order['orderid']=$data['orderid'];
-			$where_order['status']=1;
-			$order=M('crad_order')->where($where_order)->find();
-			if(empty($order)){
-				$ret_arr['errno'] = '30016';
-           		$ret_arr['errmsg']='挂单不存在';
-           		return $ret_arr;
-			}
-			if((int)$data['number']<1){
+		$where_coin['id']=$data['coin_id'];
+		$where_coin['status']=1;
+		$exchange_rate=M('coin')->where($where_coin)->getField('exchange_rate');
+		if(!$exchange_rate){
 				$ret_arr['errno'] = '30020';
-           		$ret_arr['errmsg']='交易数量必须大于或等于一';
-           		return $ret_arr;
-			}
-			if($order['surplus']<$data['number']){
-				$ret_arr['errno'] = '30017';
-           		$ret_arr['errmsg']='剩余可交易卡不足';
-           		return $ret_arr;
-			}
-			if($userid==$order['userid']){
-				$ret_arr['errno'] = '30018';
-           		$ret_arr['errmsg']='无法购买自己的挂单';
-           		return $ret_arr;
-			}
-			if($order['type']==1){
-				//挂买订单
-				$add_deal['buyer']=$order['userid'];
-				$add_deal['seller']=$userid;
-				$where_buyer['userid']=$add_deal['buyer'];
-				$buyer_info=M('member_info')->where($where_buyer)->find();
-				$where_seller['userid']=$add_deal['seller'];
-				$seller_info=M('member_info')->where($where_seller)->find();
-				//判断卖家激活卡是否充足
-				if($seller_info['usable_card']<(int)$data['number']){
-					$ret_arr         = array();
-					$ret_arr['errno'] = '30011';
-					$ret_arr['errmsg']='激活卡不足';
-					return $ret_arr;	
-				}
-				//1.生成交易订单（预）
-				$add_deal['orderid']=get_orderid_chang('crad_deal');
-				$add_deal['number']=(int)$data['number'];
-				$add_deal['veth']=(int)$data['number']*(float)$order['time_price'];
-				$add_deal['source']=$order['orderid'];
-				$add_deal['status']=-1;
-				$add_deal['create_time']=time();
-				$add_deal['update_time']=time();
-				$sql_deal=M('crad_deal')->add($add_deal);
-				//2.新增买家交易记录（预)
-				/*挂买订单买家已经付款了，无需再次操作*/
-				//3.新增卖家交易记录（预)
-				$add_transaction['userid']=$add_deal['seller'];
-				$add_transaction['orderid']=get_orderid_chang('transaction');
-				$add_transaction['coin_id']=2;
-				$add_transaction['number']=$add_deal['veth'];
-				$add_transaction['type']=7;
-				$add_transaction['plusminus']=1;
-				$add_transaction['source']=$add_deal['orderid'];
-				$add_transaction['status']=-1;
-				$add_transaction['surplus']=$seller_info['usable_veth']+$add_deal['veth'];
-				$add_transaction['create_time']=time();
-				$add_transaction['style']=3;
-				$seller_transaction=M('transaction')->add($add_transaction);
-				if($sql_deal && $seller_transaction){
-					//锁定买家用户余额
-					//挂买订单买家已付款无需再次扣减
-					//$buyer_memberInfo['usable_veth']=$buyer_info['usable_veth']-$add_deal['veth'];
-					//$buyer_memberInfo['lock_veth']=$buyer_info['lock_veth']+$add_deal['veth'];
-					$buyer_memberInfo['total_card']=$buyer_info['total_card']+$data['number'];
-					$buyer_memberInfo['usable_card']=$buyer_info['usable_card']+$data['number'];
-					$sql_memberInfo=M('member_info')->where($where_buyer)->setField($buyer_memberInfo);
-					if($sql_memberInfo){
-						//锁定卖家用户余额
-						$seller_memberInfo['usable_veth']=$seller_info['usable_veth']+$add_deal['veth'];
-						$seller_memberInfo['total_veth']=$seller_info['total_veth']+$add_deal['veth'];
-						$seller_memberInfo['usable_card']=$seller_info['usable_card']-$data['number'];
-						$seller_memberInfo['lock_card']=$seller_info['lock_card']+$data['number'];
-						$sql_memberInfo2=M('member_info')->where($where_seller)->setField($seller_memberInfo);
-						if($sql_memberInfo2){
-							$where_transaction['orderid']=$add_transaction['orderid'];
-							M('transaction')->where($where_transaction)->setField('status',1);
-							$where_deal['orderid']=$add_deal['orderid'];
-							M('crad_deal')->where($where_deal)->setField('status',1);
-							$update['release']=$order['release']+$data['number'];
-							$update['surplus']=$order['surplus']-$data['number'];
-							$update['surplus_price']=$order['surplus_price']-$add_deal['veth'];
-							if($update['surplus']==0){
-								$update['status']=2;
-							}
-							$update['update_time']=time();
-							M('crad_order')->where($where_order)->setField($update);			
-							$ret_arr         = array();
-							$ret_arr['errno'] = '0';
-							$ret_arr['errmsg']='SUCCESS';
-							return $ret_arr;
-						}else{
-							M('member_info')->where($where_buyer)->setField($buyer_info);
-							$ret_arr         = array();
-							$ret_arr['errno'] = '19998';
-							$ret_arr['errmsg']='系统级错误，请联系管理员';
-							return $ret_arr;
-						}
-						$where_transaction['orderid']=$add_transaction['orderid'];
-						M('transaction')->where($where_transaction)->setField('status',1);
-						$where_crad_order['orderid']=$add_crad_order['orderid'];
-						M('crad_order')->where($where_crad_order)->setField('status',1);
-						$ret_arr         = array();
-						$ret_arr['errno'] = '0';
-						$ret_arr['errmsg']='SUCCESS';
-						return $ret_arr;
-					}else{
-						$ret_arr         = array();
-						$ret_arr['errno'] = '19998';
-						$ret_arr['errmsg']='系统级错误，请联系管理员';
-						return $ret_arr;	
-					}
-				}else{
-						$ret_arr         = array();
-						$ret_arr['errno'] = '19998';
-						$ret_arr['errmsg']='系统级错误，请联系管理员';
-						return $ret_arr;	
-				}			
-			}else if($order['type']==2){
-				//挂卖订单
-				$add_deal['buyer']=$userid;
-				$add_deal['seller']=$order['userid'];
-				$where_buyer['userid']=$add_deal['buyer'];
-				$buyer_info=M('member_info')->where($where_buyer)->find();
-				$where_seller['userid']=$add_deal['seller'];
-				$seller_info=M('member_info')->where($where_seller)->find();
-				//判断买家余额是否充足
-				$deal_veth=(int)$data['number']*(float)$order['time_price'];
-				if($buyer_info['usable_veth']<$deal_veth){
-					$ret_arr         = array();
-					$ret_arr['errno'] = '30010';
-					$ret_arr['errmsg']='小币余额不足';
-					return $ret_arr;	
-				}
-				//1.生成交易订单（预）
-				$add_deal['orderid']=get_orderid_chang('crad_deal');
-				$add_deal['number']=(int)$data['number'];
-				$add_deal['veth']=$deal_veth;
-				$add_deal['source']=$order['orderid'];
-				$add_deal['status']=-1;
-				$add_deal['create_time']=time();
-				$add_deal['update_time']=time();
-				$sql_deal=M('crad_deal')->add($add_deal);
-				//2.新增买家交易记录（预)
-				$add_transaction['userid']=$add_deal['buyer'];
-				$orderid1=$add_transaction['orderid']=get_orderid_chang('transaction');
-				$add_transaction['coin_id']=2;
-				$add_transaction['number']=$add_deal['veth'];
-				$add_transaction['type']=7;
-				$add_transaction['plusminus']=-1;
-				$add_transaction['source']=$add_deal['orderid'];
-				$add_transaction['status']=-1;
-				$add_transaction['surplus']=$buyer_info['usable_veth']-$add_deal['veth'];
-				$add_transaction['create_time']=time();
-				$add_transaction['style']=2;
-				$buyer_transaction=M('transaction')->add($add_transaction);
-				//3.新增卖家交易记录（预)
-				//卖家已经付过激活卡 但还是需要一条veth的交易记录
-				
-				$add_transaction['userid']=$add_deal['seller'];
-				$orderid2=$add_transaction['orderid']=get_orderid_chang('transaction');
-				$add_transaction['coin_id']=2;
-				$add_transaction['number']=$add_deal['veth'];
-				$add_transaction['type']=7;
-				$add_transaction['plusminus']=1;
-				$add_transaction['source']=$add_deal['orderid'];
-				$add_transaction['status']=-1;
-				$add_transaction['surplus']=$seller_info['usable_veth']+$add_deal['veth'];
-				$add_transaction['create_time']=time();
-				$add_transaction['style']=3;
-				$seller_transaction=M('transaction')->add($add_transaction);
-				if($sql_deal && $buyer_transaction){
-					//锁定买家用户余额
-					$buyer_memberInfo['usable_veth']=$buyer_info['usable_veth']-$add_deal['veth'];
-					$buyer_memberInfo['lock_veth']=$buyer_info['lock_veth']+$add_deal['veth'];
-					$buyer_memberInfo['total_card']=$buyer_info['total_card']+$data['number'];
-					$buyer_memberInfo['usable_card']=$buyer_info['usable_card']+$data['number'];
-					$sql_memberInfo=M('member_info')->where($where_buyer)->setField($buyer_memberInfo);
-					if($sql_memberInfo){
-						//锁定卖家用户余额
-						//卖家已经扣除过激活卡了
-						$seller_memberInfo['usable_veth']=$seller_info['usable_veth']+$add_deal['veth'];
-						$seller_memberInfo['total_veth']=$seller_info['total_veth']+$add_deal['veth'];
-						//$seller_memberInfo['usable_card']=$seller_info['usable_card']-$data['number'];
-						//$seller_memberInfo['lock_card']=$seller_info['lock_card']+$data['number'];
-						$sql_memberInfo2=M('member_info')->where($where_seller)->setField($seller_memberInfo);
-						if($sql_memberInfo2){
-							$where_transaction['orderid']=array('in',$orderid1.",".$orderid2);
-							M('transaction')->where($where_transaction)->setField('status',1);
-							$where_deal['orderid']=$add_deal['orderid'];
-							M('crad_deal')->where($where_deal)->setField('status',1);
-							$update['release']=$order['release']+$data['number'];
-							$update['surplus']=$order['surplus']-$data['number'];
-							$update['surplus_price']=$order['surplus_price']-$add_deal['veth'];
-							if($update['surplus']==0){
-								$update['status']=2;
-							}
-							$update['update_time']=time();
-							M('crad_order')->where($where_order)->setField($update);			
-							$ret_arr         = array();
-							$ret_arr['errno'] = '0';
-							$ret_arr['errmsg']='SUCCESS';
-							return $ret_arr;
-						}else{
-							M('member_info')->where($where_buyer)->setField($buyer_info);
-							$ret_arr         = array();
-							$ret_arr['errno'] = '19998';
-							$ret_arr['errmsg']='系统级错误，请联系管理员';
-							return $ret_arr;
-						}
-						$where_transaction['orderid']=$add_transaction['orderid'];
-						M('transaction')->where($where_transaction)->setField('status',1);
-						$where_crad_order['orderid']=$add_crad_order['orderid'];
-						M('crad_order')->where($where_crad_order)->setField('status',1);
-						$ret_arr         = array();
-						$ret_arr['errno'] = '0';
-						$ret_arr['errmsg']='SUCCESS';
-						return $ret_arr;
-					}else{
-						$ret_arr         = array();
-						$ret_arr['errno'] = '19998';
-						$ret_arr['errmsg']='系统级错误，请联系管理员';
-						return $ret_arr;	
-					}
-				}else{
-						$ret_arr         = array();
-						$ret_arr['errno'] = '19998';
-						$ret_arr['errmsg']='系统级错误，请联系管理员';
-						return $ret_arr;	
-				}			
-			}else{
-				$ret_arr['errno'] = '30019';
-           		$ret_arr['errmsg']='无效挂单';
-           		return $ret_arr;
-			}		
-			
-		}else{
-			$ret_arr['errno'] = '30002';
-            $ret_arr['errmsg']='无效用户，请联系管理员';
-           	return $ret_arr;
-		}
-	}
-	public function myOutList($data){
-        $keys=array('access_token');
-		$check=$this->_check($data,$keys);
-		if($check){
-			return $check;
-		}
-		$userid=$this->_memberAuth($data['access_token']);
-		if(!$userid){
-				$ret_arr['errno'] = '401';
-            	$ret_arr['errmsg']='access_token不合法或已过期';
+            	$ret_arr['errmsg']='无效的币类型';
            		return $ret_arr;
 		}
 		$where_data['userid']=$userid;
-		$mobile=M('member')->where($where_data)->getField('mobile');
-		if($mobile){
-			$map['status']=1;
-			$map['type']=2;
-			$map['userid']=$userid;
-			$map['surplus']=array('gt',0);
-			$res['total_num']=M('crad_order')->where($map)->count('orderid');
-			if(empty($res['total_num'])){
-				$res['total_num']=0;
-			}
-			if($data['page'] && $data['limit']){
-					$list=M('crad_order')->where($map)->field('orderid,number,tota_price,time_price,release,surplus,surplus_price,create_time')->order('create_time desc')->page($data['page'],$data['limit'])->select();
-					$res['page']=ceil($res['total_num']/$data['limit']);
-				}else{
-					$list=M('crad_order')->where($map)->field('orderid,number,tota_price,time_price,release,surplus,surplus_price,create_time')->order('create_time desc')->select();
-				}
-				if($list){
-					foreach ($list as $key => $value) {
-						$list[$key]['time']=time_format($value['create_time'],'Y-m-d H:i:s');
-						unset($list[$key]['create_time']);
-					}
-				}
-				$res['list']=(array)$list;
-				$ret_arr['errno'] = '0';
-		        $ret_arr['errmsg']='SUCCESS';
-		        $ret_arr['data']=$res;
-		        return $ret_arr;	
-		}else{
-			$ret_arr['errno'] = '30002';
-            $ret_arr['errmsg']='无效用户，请联系管理员';
-           	return $ret_arr;
-		}
-	}
-	public function myInList($data){
-        $keys=array('access_token');
-		$check=$this->_check($data,$keys);
-		if($check){
-			return $check;
-		}
-		$userid=$this->_memberAuth($data['access_token']);
-		if(!$userid){
-				$ret_arr['errno'] = '401';
-            	$ret_arr['errmsg']='access_token不合法或已过期';
-           		return $ret_arr;
-		}
-		$where_data['userid']=$userid;
-		$mobile=M('member')->where($where_data)->getField('mobile');
-		if($mobile){
-			$map['status']=1;
-			$map['type']=1;
-			$map['userid']=$userid;
-			$map['surplus']=array('gt',0);
-			$res['total_num']=M('crad_order')->where($map)->count('orderid');
-			if(empty($res['total_num'])){
-				$res['total_num']=0;
-			}
-			if($data['page'] && $data['limit']){
-					$list=M('crad_order')->where($map)->field('orderid,number,tota_price,time_price,release,surplus,surplus_price,create_time')->order('create_time desc')->page($data['page'],$data['limit'])->select();
-					$res['page']=ceil($res['total_num']/$data['limit']);
-				}else{
-					$list=M('crad_order')->where($map)->field('orderid,number,tota_price,time_price,release,surplus,surplus_price,create_time')->order('create_time desc')->select();
-				}
-				if($list){
-					foreach ($list as $key => $value) {
-						$list[$key]['time']=time_format($value['create_time'],'Y-m-d H:i:s');
-						unset($list[$key]['create_time']);
-					}
-				}
-				$res['list']=(array)$list;
-				$ret_arr['errno'] = '0';
-		        $ret_arr['errmsg']='SUCCESS';
-		        $ret_arr['data']=$res;
-		        return $ret_arr;	
-		}else{
-			$ret_arr['errno'] = '30002';
-            $ret_arr['errmsg']='无效用户，请联系管理员';
-           	return $ret_arr;
-		}
-	}
-	public function cardOrderDel($data){
-		$keys=array('access_token','orderid','verification_code');
-		$check=$this->_check($data,$keys);
-		if($check){
-			return $check;
-		}
-		$userid=$this->_memberAuth($data['access_token']);
-		if(!$userid){
-				$ret_arr['errno'] = '401';
-            	$ret_arr['errmsg']='access_token不合法或已过期';
-           		return $ret_arr;
-		}
-		$where_data['userid']=$userid;
-		$mobile=M('member')->where($where_data)->getField('mobile');
-		if($mobile){
-			$code_check=$this->_mobileCodeCheck($mobile,$data['verification_code']);
+		$member=M('member')->where($where_data)->find();
+		if($member){
+			$code_check=$this->_mobileCodeCheck($member['mobile'],$data['verification_code']);
 			if($code_check){
 				return $code_check;
 			}
-			$member_info=M('member_info')->where($where_data)->find();
-			$where_order['orderid']=$data['orderid'];
-			$where_order['userid']=$userid;
-			$where_order['status']=1;
-			$order=M('crad_order')->where($where_order)->find();
-			if(empty($order)){
-				$ret_arr['errno'] = '30016';
-           		$ret_arr['errmsg']='挂单不存在';
+			if($data['number']<0){
+				$ret_arr['errno'] = '30002';
+            	$ret_arr['errmsg']='兑换必须大于0';
            		return $ret_arr;
 			}
-			$res=M('crad_order')->where($where_order)->setField('status',-1);
-			if($res){
-				if($order['type']==1){
-					//挂买订单
-					if($order['release']>0 && $order['surplus_price']>0){
-						//3.新增系统返回交易记录（预)
-						$add_transaction['userid']=$userid;
-						$add_transaction['orderid']=get_orderid_chang('transaction');
-						$add_transaction['coin_id']=2;
-						$add_transaction['number']=$order['surplus_price'];
-						$add_transaction['type']=7;
-						$add_transaction['plusminus']=1;
-						$add_transaction['source']=$order['orderid'];
-						$add_transaction['status']=-1;
-						$add_transaction['surplus']=$member_info['usable_veth']+$order['surplus_price'];
-						$add_transaction['create_time']=time();
-						$add_transaction['style']=4;
-						$sql_transaction=M('transaction')->add($add_transaction);
-						if($sql_transaction){
-						//返还锁定的用户余额
-						$data_memberInfo['usable_veth']=$member_info['usable_veth']+$order['surplus_price'];
-						$data_memberInfo['lock_veth']=$member_info['lock_veth']-$order['surplus_price'];
-						$sql_memberInfo=M('member_info')->where($where_data)->setField($data_memberInfo);
-							if($sql_memberInfo){
-								$where_transaction['orderid']=$add_transaction['orderid'];
-								M('transaction')->where($where_transaction)->setField('status',1);
-								$ret_arr         = array();
-								$ret_arr['errno'] = '0';
-								$ret_arr['errmsg']='SUCCESS';
-								return $ret_arr;
-							}else{
-								$ret_arr         = array();
-								$ret_arr['errno'] = '19998';
-								$ret_arr['errmsg']='系统级错误，请联系管理员';
-								return $ret_arr;	
-							}
-						}else{
-							M('crad_order')->where($where_order)->setField('status',1);
-							$ret_arr         = array();
-							$ret_arr['errno'] = '19998';
-							$ret_arr['errmsg']='系统级错误，请联系管理员2';
-							return $ret_arr;	
-						}	
-					}else{
-						$ret_arr         = array();
-						$ret_arr['errno'] = '0';
-						$ret_arr['errmsg']='SUCCESS';
-						return $ret_arr;
-					}
-				}else if($order['type']==2){
-					//挂卖订单
-					//可扩展激活卡交易记录
-					//返回激活卡到账户上
-						$data_memberInfo['usable_card']=$member_info['usable_card	']+$order['surplus'];
-						$data_memberInfo['lock_card']=$member_info['lock_card']-$order['surplus'];
-						$sql_memberInfo=M('member_info')->where($where_data)->setField($data_memberInfo);
-							if($sql_memberInfo){
-								$ret_arr         = array();
-								$ret_arr['errno'] = '0';
-								$ret_arr['errmsg']='SUCCESS';
-								return $ret_arr;
-							}else{
-								$ret_arr         = array();
-								$ret_arr['errno'] = '19998';
-								$ret_arr['errmsg']='系统级错误，请联系管理员';
-								return $ret_arr;	
-							}
+			$where_consignee['userid']=$userid;
+        	$where_consignee['coin_id']=$data['coin_id'];
+       	 	$member_coin=M('member_coin')->where($where_consignee)->find();
+        	if(empty($member_coin)){
+	            M('member_coin')->add($where_consignee);
+	            $member_coin=M('member_coin')->where($where_consignee)->find();
+        	}
+        	if($member_coin['usable']<$data['number']){
+					$ret_arr['errno'] = '30009';
+           			$ret_arr['errmsg']='余额不足';
+           			return $ret_arr;
+			}
+			$add_exchange['orderid']=get_orderid_chang('exchange');
+			$add_exchange['number']=$data['number'];
+			$add_exchange['userid']=$userid;
+			$add_exchange['coin_id']=$data['coin_id'];
+			$add_exchange['bts']=(float)$data['number']*(float)$exchange_rate;
+			$add_exchange['status']=-1;
+			$add_exchange['create_time']=time();
+			$add_exchange['update_time']=time();
+			$sql_exchange=M('exchange')->add($add_exchange);
+			//.记录币交易记录
+			$coin_transaction['userid']=$userid;
+			$coin_transaction['orderid']=get_orderid_chang('transaction_coin');
+			$coin_transaction['coin_id']=$data['coin_id'];
+			$coin_transaction['number']=$data['number'];
+			$coin_transaction['type']=2;
+			$coin_transaction['plusminus']=-1;
+			$coin_transaction['source']=$add_exchange['orderid'];
+			$coin_transaction['status']=-1;
+			$coin_transaction['surplus']=(float)$member_coin['usable']-(float)$data['number'];
+			$coin_transaction['create_time']=time();
+			$sql_coin_consignee=M('transaction_coin')->add($coin_transaction);
+			//.记录bts交易记录
+			$bst_transaction['userid']=$userid;
+			$bst_transaction['orderid']=get_orderid_chang('transaction');
+			$bst_transaction['coin_id']=1;
+			$bst_transaction['number']=$add_exchange['bts'];
+			$bst_transaction['type']=5;
+			$bst_transaction['plusminus']=1;
+			$bst_transaction['source']=$add_exchange['orderid'];
+			$bst_transaction['status']=-1;
+			$bst_transaction['surplus']=(float)$member['usable']+(float)$add_exchange['bts'];
+			$bst_transaction['create_time']=time();
+			$sql_bst_consignee=M('transaction')->add($bst_transaction);
+			if($sql_exchange && $sql_bst_consignee && $sql_coin_consignee){
+				//修改余额
+				$update_coin['usable']=$coin_transaction['surplus'];
+				$coin_update=M('member_coin')->where($where_consignee)->setField($update_coin);
+				$where_member['usable']=$bst_transaction['surplus'];
+				$member_update=M('member')->where($where_data)->setField($where_member);
+				if($coin_update && $member_update){
+					$where_coin_transaction['orderid']=$coin_transaction['orderid'];
+                     M('transaction_coin')->where($where_coin_transaction)->setField('status',1);
+                    $where_bst_transaction['orderid']=$bst_transaction['orderid'];
+                    M('transaction')->where($where_bst_transaction)->setField('status',1);
+                    $where_exchange['orderid']=$add_exchange['orderid'];
+                    M('exchange')->where($where_exchange)->setField('status',1);
+					$ret_arr         = array();
+					$ret_arr['errno'] = '0';
+					$ret_arr['errmsg']='SUCCESS';
+					return $ret_arr;
 				}else{
 					$ret_arr         = array();
-					$ret_arr['errno'] = '30019';
-	           		$ret_arr['errmsg']='无效挂单';
-	           		return $ret_arr;
+					$ret_arr['errno'] = '19998';
+					$ret_arr['errmsg']='系统级错误，请联系管理员';
+					return $ret_arr;	
 				}
 			}else{
 				$ret_arr         = array();
 				$ret_arr['errno'] = '19998';
-				$ret_arr['errmsg']='系统级错误，请联系管理员';
+				$ret_arr['errmsg']='系统级错误，请联系管理员2';
 				return $ret_arr;	
 			}
+		}else{
+			$ret_arr['errno'] = '30002';
+            $ret_arr['errmsg']='无效用户，请联系管理员';
+           	return $ret_arr;
+		}
+		
+	}
+	public function exchangeRecord($data){
+		/*$data参数			
+			"access_token": 	登录凭证 		必填
+			"page"				分页页数		非必填
+			"limit"				每页条数		非必填
+			
+
+		*/
+		$keys=array('access_token');
+		$check=$this->_check($data,$keys);
+		if($check){
+			return $check;
+		}
+		$userid=$this->_memberAuth($data['access_token']);
+		if(!$userid){
+				$ret_arr['errno'] = '401';
+            	$ret_arr['errmsg']='access_token不合法或已过期';
+           		return $ret_arr;
+		}
+		$where_data['userid']=$userid;
+		$member=M('member')->where($where_data)->find();
+		if($member){
+				$map['userid']=$userid;
+				$map['status']=1;
+				$res['total_num']=M('exchange')->where($map)->count('orderid');
+				if(empty($res['total_num'])){
+					$res['total_num']=0;
+				}
+				if($data['page'] && $data['limit']){
+					$list=M('exchange')->where($map)->field('orderid,number,DATE_FORMAT(FROM_UNIXTIME(create_time),"%Y-%m-%d %h:%i:%s") as time,coin_id')->order('create_time desc')->page($data['page'],$data['limit'])->select();
+					$res['page']=ceil($res['total_num']/$data['limit']);
+				}else{
+					$list=M('exchange')->where($map)->field('orderid,number,DATE_FORMAT(FROM_UNIXTIME(create_time),"%Y-%m-%d %h:%i:%s") as time,coin_id')->order('create_time desc')->select();
+					}
+				if($list){
+					foreach ($list as $key => $value) {
+						$where_coin['id']=1;
+						$list[$key]['coid_name']=M('coin')->where($where_coin)->getField('name');
+						unset($list[$key]['coin_id']);
+					}
+				}
+				$res['list']=(array)$list;
+				$ret_arr['errno'] = '0';
+		        $ret_arr['errmsg']='SUCCESS';
+		        $ret_arr['data']=$res;
+		        return $ret_arr;	
+		}else{
+			$ret_arr['errno'] = '30002';
+            $ret_arr['errmsg']='无效用户，请联系管理员';
+           	return $ret_arr;
+		}
+		
+	}
+	public function getService($data){
+		/*$data参数			
+			"access_token": 	登录凭证 		必填		
+		*/
+		$keys=array('access_token');
+		$check=$this->_check($data,$keys);
+		if($check){
+			return $check;
+		}
+		$userid=$this->_memberAuth($data['access_token']);
+		if(!$userid){
+				$ret_arr['errno'] = '401';
+            	$ret_arr['errmsg']='access_token不合法或已过期';
+           		return $ret_arr;
+		}
+		$where_data['userid']=$userid;
+		$member=M('member')->where($where_data)->find();
+		if($member){
+				$start=C('SERVICE_START')?C('SERVICE_START'):'0.00';
+				$end=C('SERVICE_END')?C('SERVICE_END'):'200.00';
+				$ret_arr['errno'] = '0';
+		        $ret_arr['errmsg']='SUCCESS';
+		        $ret_arr['data']['start']=$start;
+		        $ret_arr['data']['end']=$end;
+		        return $ret_arr;	
 		}else{
 			$ret_arr['errno'] = '30002';
             $ret_arr['errmsg']='无效用户，请联系管理员';

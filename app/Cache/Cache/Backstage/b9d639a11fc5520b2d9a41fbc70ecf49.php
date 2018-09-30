@@ -212,6 +212,7 @@
 												</div>
 											</div>
 										</div>
+										
 										<div class="form-group">
 											<label class="col-md-3 control-label">状态</label>
 											<div class="checkbox-custom checkbox-inline">

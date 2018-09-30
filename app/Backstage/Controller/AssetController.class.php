@@ -3,7 +3,8 @@ namespace Backstage\Controller;
 use Think\Controller;
 class AssetController extends PublicController {
     public function index(){
-		$coin=M('coin')->select();
+		$map['status']=1;
+    	$coin=M('coin')->where($map)->select();
 		$this->assign('coin',$coin);
 		$this->display('page-asset');
 	}

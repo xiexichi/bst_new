@@ -219,17 +219,13 @@
 											</div>
 										</div>
 										<div class="form-group">
-											<label class="col-md-3 control-label">交易类型</label>
-											<div class="col-md-9">
-											<div class="checkbox-custom checkbox-inline">
-												<input type="checkbox" name="coin_id[]" value="1" checked="checked"> 
-												<label for="inline-checkbox1">EOS</label>
+											<label class="col-md-3 control-label">币种</label>
+											<div class="col-sm-3">
+												<select name="coin"  class="form-control" >
+													<option value="">全部显示</option>
+													<?php if(is_array($coin)): foreach($coin as $key=>$vo): ?><option value="<?php echo ($vo["id"]); ?>"><?php echo ($vo["name"]); ?></option><?php endforeach; endif; ?>
+												</select>
 											</div>
-											<div class="checkbox-custom checkbox-inline">
-												<input type="checkbox" name="coin_id[]" value="2" checked="checked" > 
-												<label for="inline-checkbox2">VETH</label>
-											</div>
-										</div>	
 										</div>
 										<input type="text" name="page" value="1" class="hide" id="input-page">
 										<div class="form-group">

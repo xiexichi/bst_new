@@ -42,7 +42,7 @@ class ApiController extends Controller {
                 case 'updateHead':$this->updateHead($data);break;
                 case 'pageAssets':$this->pageAssets($data);break;
                 case 'getCoin':$this->getCoin($data);break;
-                
+                case 'profit':$this->profit($data);break;
                 case 'assets':$this->assets($data);break;
                 case 'give':$this->give($data);break;
                 case 'systemBulletin':$this->systemBulletin($data);break;
@@ -51,17 +51,11 @@ class ApiController extends Controller {
                 case 'transfer':$this->transfer($data);break;
                 case 'rechangeRecord':$this->rechangeRecord($data);break;
                 case 'activateRecord':$this->activateRecord($data);break;
-                case 'cardMoney':$this->cardMoney($data);break;
-                case 'cardOrderIn':$this->cardOrderIn($data);break;
-                case 'cardOrderOut':$this->cardOrderOut($data);break;
-                case 'outList':$this->outList($data);break;
-                case 'inList':$this->inList($data);break;
-                case 'todayCardMoney':$this->todayCardMoney($data);break;
-                case 'myOutList':$this->myOutList($data);break;
-                case 'myInList':$this->myInList($data);break;
-                case 'cradRecord':$this->cradRecord($data);break;
-                case 'cardDeal':$this->cardDeal($data);break;
-                case 'cardOrderDel':$this->cardOrderDel($data);break;
+                
+                case 'exchange':$this->exchange($data);break;
+                case 'exchangeRecord':$this->exchangeRecord($data);break;
+                case 'getService':$this->getService($data);break;
+                
                 default:
                 $this->display('page-404');break; 
 			}
@@ -185,61 +179,26 @@ class ApiController extends Controller {
         $return   = $Userapi->rechangeRecord($data);
         $this->ajaxReturn($return,'ALL');
     }
-    protected function cardMoney($data){
+    protected function exchange($data){
         $Userapi = new \Userapi;
-        $return   = $Userapi->cardMoney($data);
+        $return   = $Userapi->exchange($data);
         $this->ajaxReturn($return,'ALL');
     }
-    protected function cardOrderIn($data){
+    protected function exchangeRecord($data){
         $Userapi = new \Userapi;
-        $return   = $Userapi->cardOrderIn($data);
+        $return   = $Userapi->exchangeRecord($data);
         $this->ajaxReturn($return,'ALL');
     }
-    protected function cardOrderOut($data){
-        $Userapi = new \Userapi;
-        $return   = $Userapi->cardOrderOut($data);
-        $this->ajaxReturn($return,'ALL');
-    }
-    protected function outList($data){
-        $Userapi = new \Userapi;
-        $return   = $Userapi->outList($data);
-        $this->ajaxReturn($return,'ALL');
-    }
-    protected function inList($data){
-        $Userapi = new \Userapi;
-        $return   = $Userapi->inList($data);
-        $this->ajaxReturn($return,'ALL');
-    }
-    protected function todayCardMoney($data){
-        $Userapi = new \Userapi;
-        $return   = $Userapi->todayCardMoney($data);
-        $this->ajaxReturn($return,'ALL');
-    }
-    protected function myOutList($data){
-        $Userapi = new \Userapi;
-        $return   = $Userapi->myOutList($data);
-        $this->ajaxReturn($return,'ALL');
-    }
-    protected function myInList($data){
-        $Userapi = new \Userapi;
-        $return   = $Userapi->myInList($data);
-        $this->ajaxReturn($return,'ALL');
-    }
-    protected function cradRecord($data){
+    protected function profit($data){
         unset($data['coin_id']);
-        $data['type']="7";
+        $data['type']="4";
         $Userapi = new \Userapi;
         $return   = $Userapi->transaction($data);
         $this->ajaxReturn($return,'ALL');
     }
-     protected function cardDeal($data){
+    protected function getService($data){
         $Userapi = new \Userapi;
-        $return   = $Userapi->cardDeal($data);
-        $this->ajaxReturn($return,'ALL');
-    }
-    protected function cardOrderDel($data){
-        $Userapi = new \Userapi;
-        $return   = $Userapi->cardOrderDel($data);
+        $return   = $Userapi->getService($data);
         $this->ajaxReturn($return,'ALL');
     }
    

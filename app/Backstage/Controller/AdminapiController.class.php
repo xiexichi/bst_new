@@ -61,7 +61,7 @@ class AdminapiController extends Controller {
                 case 'admin_rechange_lists':$this->admin_rechange_lists($data);break;
                 case 'admin_price_list':$this->admin_price_list($data);break;
                 case 'admin_price_success':$this->admin_price_success($data);break;
-                
+                case 'admin_coin_list':$this->admin_coin_list($data);break;
                 
 			}
 		}
@@ -1531,30 +1531,32 @@ class AdminapiController extends Controller {
                 $this->ajaxReturn($ret_arr,'JSON');
         }
         $where_consignee['userid']=$consignee['userid'];
-        $consignee_info=M('member_info')->where($where_consignee)->find();
-        //收币用户
-       
-        $consignee_transaction['surplus']=$consignee_info['total_eos']+$recharge['number'];
-        $consignee_memberInfo['usable_eos']=$consignee_info['usable_eos']+$recharge['number'];
-        $consignee_memberInfo['total_eos']=$consignee_info['total_eos']+$recharge['number'];
-            
-            //3.新增交易记录（预）(收币人)
-            $consignee_transaction['userid']=$consignee['userid'];
-            $consignee_transaction['orderid']=get_orderid_chang('transaction');
-            $consignee_transaction['coin_id']=1;
-            $consignee_transaction['number']=$recharge['number'];
-            $consignee_transaction['type']=5;
-            $consignee_transaction['plusminus']=1;
-            $consignee_transaction['source']=$data['id'];
-            $consignee_transaction['status']=-1;
-            $consignee_transaction['create_time']=time();
-            $sql_consignee=M('transaction')->add($consignee_transaction);
+        $where_consignee['coin_id']=$recharge['coin_id'];
+        $member_coin=M('member_coin')->where($where_consignee)->find();
+        if(empty($member_coin)){
+            M('member_coin')->add($where_consignee);
+            $member_coin=M('member_coin')->where($where_consignee)->find();
+        }
+        
+        //3.新增交易记录（预）(收币人)
+        $consignee_transaction['userid']=$consignee['userid'];
+        $consignee_transaction['orderid']=get_orderid_chang('transaction_coin');
+        $consignee_transaction['coin_id']=$recharge['coin_id'];
+        $consignee_transaction['number']=$recharge['number'];
+        $consignee_transaction['type']=1;
+        $consignee_transaction['plusminus']=1;
+        $consignee_transaction['source']=$data['id'];
+        $consignee_transaction['status']=-1;
+        $consignee_transaction['surplus']=(float)$member_coin['usable']+(float)$recharge['number'];
+        $consignee_transaction['create_time']=time();
+        $sql_consignee=M('transaction_coin')->add($consignee_transaction);
             if($sql_consignee){
                     //锁定用户余额
-                        $sql_memberInfo=M('member_info')->where($where_consignee)->setField($consignee_memberInfo);
+                        $consignee_memberInfo['usable']=$consignee_transaction['surplus'];
+                        $sql_memberInfo=M('member_coin')->where($where_consignee)->setField($consignee_memberInfo);
                         if($sql_memberInfo){
                             $where_transaction['orderid']=$consignee_transaction['orderid'];
-                            M('transaction')->where($where_transaction)->setField('status',1);
+                            M('transaction_coin')->where($where_transaction)->setField('status',1);
                             $where_recharge['id']=$data['id'];
                             M('recharge')->where($where_recharge)->setField('status',2);
                             $ret_arr         = array();
@@ -1562,7 +1564,7 @@ class AdminapiController extends Controller {
                             $ret_arr['errmsg']='SUCCESS';
                             $this->ajaxReturn($ret_arr,'JSON');
                         }else{
-                            M('member_info')->where($where_data)->setField($member_info);
+                            M('member_coin')->where($where_data)->setField($member_coin);
                             $ret_arr         = array();
                             $ret_arr['errno'] = '19998';
                             $ret_arr['errmsg']='系统级错误，请联系管理员';
@@ -2065,4 +2067,58 @@ class AdminapiController extends Controller {
                 $this->ajaxReturn($ret_arr,'JSON');    
              }
         }
+        /*
+     * 方法名:admin_coin_list
+     * 功能：获取轮播列表
+     * 传入参数:start(选填)开始时间
+     *          end(选填)结束时间
+     * 返回参数:data 轮播列表数据
+     */
+    protected function admin_coin_list($data){
+        $userid=$this->_userAuth();
+        $map['status']=1;
+        if($data['start']){
+            if($data['end']){
+                $start=strtotime($data['start']." 00:00:00");
+                $end=strtotime($data['end']." 23:59:59");
+            $map['create_time'] = array(array('egt',$start),array('elt',$end),'and');
+            }else{
+            $start=strtotime($data['start']." 00:00:00");
+            $map['create_time']=array('egt',$start);
+            }
+        }else{
+            if($data['end']){
+            $end=strtotime($data['end']." 23:59:59");
+            $map['create_time']=array('elt',$end);
+            }
+        }
+        $lists=M('coin')->where($map)->order('create_time desc')->limit(10)->page($data['page'])->select();
+        if($lists){
+            foreach ($lists as $key => $value) {
+                $lists[$key]['create_time']=time_format($value['create_time']);
+            }
+
+                $ret_arr         = array();
+                $ret_arr['errno'] = '0';
+                $ret_arr['errmsg']='SUCCESS';
+                $ret_arr['data']=$lists;
+                $ret_arr['count']=M('coin')->where($map)->count('id');
+                if($ret_arr['count']<=10){
+                   $ret_arr['zong_page']=1; 
+                }else{
+                    if($ret_arr['count']%10>0){
+                        $ret_arr['zong_page']=intval($ret_arr['count']/10)+1;
+                    }else{
+                        $ret_arr['zong_page']=$ret_arr['count']/10;
+                    }
+                }
+                $this->ajaxReturn($ret_arr,'JSON');
+        }else{
+                $ret_arr         = array();
+                $ret_arr['errno'] = '0';
+                $ret_arr['errmsg']='SUCCESS';
+                $ret_arr['data']=array();
+                $this->ajaxReturn($ret_arr,'JSON');
+        }
+    }
 }
