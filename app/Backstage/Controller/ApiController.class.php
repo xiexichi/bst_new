@@ -55,6 +55,9 @@ class ApiController extends Controller {
                 case 'exchange':$this->exchange($data);break;
                 case 'exchangeRecord':$this->exchangeRecord($data);break;
                 case 'getService':$this->getService($data);break;
+                case 'quicken':$this->quicken($data);break;
+                case 'community':$this->community($data);break;
+                case 'community_status':$this->community_status($data);break;
                 
                 default:
                 $this->display('page-404');break; 
@@ -199,6 +202,21 @@ class ApiController extends Controller {
     protected function getService($data){
         $Userapi = new \Userapi;
         $return   = $Userapi->getService($data);
+        $this->ajaxReturn($return,'ALL');
+    }
+    protected function quicken($data){
+        $Userapi = new \Userapi;
+        $return   = $Userapi->quicken($data);
+        $this->ajaxReturn($return,'ALL');
+    }
+    protected function community_status($data){
+        $Userapi = new \Userapi;
+        $return   = $Userapi->community_status($data);
+        $this->ajaxReturn($return,'ALL');
+    }
+    protected function community($data){
+        $Userapi = new \Userapi;
+        $return   = $Userapi->community($data);
         $this->ajaxReturn($return,'ALL');
     }
    

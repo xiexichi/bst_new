@@ -1586,4 +1586,161 @@ class Userapi {
            	return $ret_arr;
 		}
 	}
+	public function quicken($data){
+		/*$data参数			
+			"access_token": 	登录凭证 		必填		
+		*/
+		$keys=array('access_token','verification_code');
+		$check=$this->_check($data,$keys);
+		if($check){
+			return $check;
+		}
+		$userid=$this->_memberAuth($data['access_token']);
+		if(!$userid){
+				$ret_arr['errno'] = '401';
+            	$ret_arr['errmsg']='access_token不合法或已过期';
+           		return $ret_arr;
+		}
+		$where_data['userid']=$userid;
+		$member=M('member')->where($where_data)->find();
+		if($member){
+			$code_check=$this->_mobileCodeCheck($member['mobile'],$data['verification_code']);
+			if($code_check){
+				return $code_check;
+			}
+			$where_activate['userid']=$userid;
+			$where_activate['status']=1;
+			$sum=M('activate_order')->where($where_activate)->sum('number');
+			if(empty($sum)){
+				$ret_arr['errno'] = '30021';
+            	$ret_arr['errmsg']='当前在投BST为0';
+           		return $ret_arr;
+			}
+			$give=M('activate_setup')->where(array('id'=>1))->getField('give');
+			$number=(float)$sum*(100+(float)$give)/100;
+			$add_quicken_order['orderid']=get_orderid_chang('quicken_order');
+			$add_quicken_order['userid']=$userid;
+			$add_quicken_order['number']=$number;
+			$add_quicken_order['status']=-1;
+			$add_quicken_order['create_time']=time();
+			$sql_quicken_order=M('quicken_order')->add($add_quicken_order);
+			if($sql_quicken_order){
+				M('activate_order')->where($where_activate)->setField('status',-2);
+				$where_quicken['orderid']=$add_quicken_order['orderid'];
+				M('quicken_order')->where($where_quicken)->setField('status',1);
+				$ret_arr['errno'] = '0';
+		        $ret_arr['errmsg']='SUCCESS';
+		        return $ret_arr;	
+			}else{
+				$ret_arr         = array();
+				$ret_arr['errno'] = '19998';
+				$ret_arr['errmsg']='系统级错误，请联系管理员2';
+				return $ret_arr;	
+			}
+			
+		}else{
+			$ret_arr['errno'] = '30002';
+            $ret_arr['errmsg']='无效用户，请联系管理员';
+           	return $ret_arr;
+		}
+	}
+	public function community($data){
+		/*$data参数			
+			"access_token": 	登录凭证 		必填	
+			"name": 			姓名 		必填
+			"identity_card": 	身份证号码 	必填	
+			"mobile": 			手机号码 		必填		
+		*/
+		$keys=array('access_token','name','identity_card','mobile');
+		$check=$this->_check($data,$keys);
+		if($check){
+			return $check;
+		}
+		$userid=$this->_memberAuth($data['access_token']);
+		if(!$userid){
+				$ret_arr['errno'] = '401';
+            	$ret_arr['errmsg']='access_token不合法或已过期';
+           		return $ret_arr;
+		}
+		$where_data['userid']=$userid;
+		$member=M('member')->where($where_data)->find();
+		if($member){
+			$where_activate['userid']=$userid;
+			$community=M('community')->where($where_activate)->find();
+			if($community['status']==1){
+				$ret_arr['errno'] = '30021';
+            	$ret_arr['errmsg']='等待审核，请勿重复提交';
+           		return $ret_arr;
+			}
+			if($community['status']==2){
+				$ret_arr['errno'] = '30021';
+            	$ret_arr['errmsg']='以成为社区会员，请勿重复申请';
+           		return $ret_arr;
+			}
+			$add_community['name']=$data['name'];
+			$add_community['userid']=$userid;
+			$add_community['identity_card']=$data['identity_card'];
+			$add_community['mobile']=$data['mobile'];
+			$add_community['status']=1;
+			$add_community['create_time']=time();
+			$sql_community=M('community')->add($add_community);
+			if($sql_community){
+				$ret_arr['errno'] = '0';
+		        $ret_arr['errmsg']='SUCCESS';
+		        return $ret_arr;	
+			}else{
+				$ret_arr         = array();
+				$ret_arr['errno'] = '19998';
+				$ret_arr['errmsg']='系统级错误，请联系管理员';
+				return $ret_arr;	
+			}
+			
+		}else{
+			$ret_arr['errno'] = '30002';
+            $ret_arr['errmsg']='无效用户，请联系管理员';
+           	return $ret_arr;
+		}
+	}
+	public function community_status($data){
+		/*$data参数			
+			"access_token": 	登录凭证 		必填		
+		*/
+		$keys=array('access_token');
+		$check=$this->_check($data,$keys);
+		if($check){
+			return $check;
+		}
+		$userid=$this->_memberAuth($data['access_token']);
+		if(!$userid){
+				$ret_arr['errno'] = '401';
+            	$ret_arr['errmsg']='access_token不合法或已过期';
+           		return $ret_arr;
+		}
+		$where_data['userid']=$userid;
+		$member=M('member')->where($where_data)->find();
+		if($member){
+			$where_activate['userid']=$userid;
+			$community=M('community')->where($where_activate)->find();
+			if($community['status']==1){
+				$ret_arr['errno'] = '30021';
+            	$ret_arr['errmsg']='等待审核';
+           		return $ret_arr;
+			}
+			if($community['status']==2){
+				$ret_arr['errno'] = '30022';
+            	$ret_arr['errmsg']='已成为社区会员';
+           		return $ret_arr;
+			}
+			if($community['status']==2){
+				$ret_arr['errno'] = '0';
+		        $ret_arr['errmsg']='SUCCESS';
+		        return $ret_arr;
+			}
+		}else{
+			$ret_arr['errno'] = '30002';
+            $ret_arr['errmsg']='无效用户，请联系管理员';
+           	return $ret_arr;
+		}
+	}
+	
 }
