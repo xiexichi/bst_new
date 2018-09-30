@@ -341,7 +341,7 @@ class Userapi {
 		}
 		$data_add['mobile']=$data['mobile'];
 		$data_add['password']=ucenter_md5($data['password']);
-		$data_add['nickname']=$data['name'];
+		$data_add['nickname']="手机用户:".$data['mobile'];
 		$data_add['identity_card']=$data['identity_card'];
 		$data_add['identity_imgurl']=$data['identity_imgurl'];
 		$data_add['status']=1;
@@ -1279,7 +1279,7 @@ class Userapi {
 			"voucher": 			凭证 		必填
 			"verification_code"	验证码		必填
 		*/
-		$keys=array('access_token','number','voucher','verification_code','coin_id');
+		$keys=array('access_token','number','voucher','verification_code','coin_id','random');
 		$check=$this->_check($data,$keys);
 		if($check){
 			return $check;
@@ -1309,6 +1309,7 @@ class Userapi {
 			$add_recharge['status']=1;
 			$add_recharge['create_time']=time();
 			$add_recharge['update_time']=time();
+			$add_recharge['random']=$data['random'];
 			$res=M('recharge')->add($add_recharge);
 			if($res){
 				$ret_arr         = array();
