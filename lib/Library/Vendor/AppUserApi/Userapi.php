@@ -604,6 +604,95 @@ class Userapi {
 		$where_data['userid']=$userid;
 		$member=M('member')->where($where_data)->find();
 		if($member){
+			$code_check=$this->_mobileCodeCheck($member['mobile'],$data['verification_code']);
+			if($code_check){
+				return $code_check;
+			}
+			$activate_setup_map['status']=1;
+			$activate_setup_map['id']=1;
+			$activate_setup=M('activate_setup')->where($activate_setup_map)->find();
+			if($member['usable']<$data['number']){
+				$ret_arr         = array();
+				$ret_arr['errno'] = '30009';
+            	$ret_arr['errmsg']='BST余额不足';
+           		return $ret_arr;
+			}	
+			//生成激活订单
+			$data_activate['orderid']=get_orderid_chang('activate_order');
+			$data_activate['userid']=$userid;
+			$data_activate['number']=$data['number'];
+			$data_activate['service']=$data['service'];
+			$data_activate['create_time']=time();
+			$data_activate['update_time']=time();
+			//先生成无效订单
+			$data_activate['status']=-1;
+			$add_activate=M('activate_order')->add($data_activate);
+			//新增交易记录
+			$data_transaction['orderid']=get_orderid_chang('transaction');
+			$data_transaction['number']=$data_activate['number'];
+			$data_transaction['type']=1;
+			$data_transaction['userid']=$userid;
+			$data_transaction['surplus']=$member['usable']-$data_activate['number'];
+			$data_transaction['plusminus']=-1;
+			$data_transaction['coin_id']=1;
+			$data_transaction['create_time']=time();
+			$data_transaction['status']=-1;
+			$data_transaction['source']=$data_activate['orderid'];
+			$sql_transaction=M('transaction')->add($data_transaction);
+			if($add_activate && $sql_transaction){
+				//锁定用户eos余额
+				$data_memberInfo['usable']=$member['usable']-$data_activate['number'];
+				$data_memberInfo['lock']=$member['lock']+$data_activate['number'];
+				$sql_memberInfo=M('member')->where($where_data)->setField($data_memberInfo);
+				if($sql_memberInfo){
+					$where_transaction['orderid']=$data_transaction['orderid'];
+					M('transaction')->where($where_transaction)->setField('status',1);
+					$where_activate['orderid']=$data_activate['orderid'];
+					M('activate_order')->where($where_activate)->setField('status',1);
+					$this->_spreadBonus($data_activate['orderid']);
+					$ret_arr         = array();
+					$ret_arr['errno'] = '0';
+					$ret_arr['errmsg']='SUCCESS';
+					return $ret_arr;
+				}else{
+					$ret_arr         = array();
+					$ret_arr['errno'] = '19998';
+					$ret_arr['errmsg']='系统级错误，请联系管理员';
+					return $ret_arr;	
+				}
+			}else{
+				$ret_arr         = array();
+				$ret_arr['errno'] = '19998';
+				$ret_arr['errmsg']='系统级错误，请联系管理员';
+				return $ret_arr;	
+			}
+		}else{
+			$ret_arr['errno'] = '30002';
+            $ret_arr['errmsg']='无效用户，请联系管理员';
+           	return $ret_arr;
+		}
+		
+	}
+	public function this_activate($data){
+		/*$data参数			
+			"access_token": 	登录凭证 		必填
+			"number": 			投入数量 		必填
+			"service":			矿工费 		必填
+		*/
+		$keys=array('access_token','number','service');
+		$check=$this->_check($data,$keys);
+		if($check){
+			return $check;
+		}
+		$userid=$this->_memberAuth($data['access_token']);
+		if(!$userid){
+				$ret_arr['errno'] = '401';
+            	$ret_arr['errmsg']='access_token不合法或已过期';
+           		return $ret_arr;
+		}
+		$where_data['userid']=$userid;
+		$member=M('member')->where($where_data)->find();
+		if($member){
 			$activate_setup_map['status']=1;
 			$activate_setup_map['id']=1;
 			$activate_setup=M('activate_setup')->where($activate_setup_map)->find();
@@ -1468,6 +1557,7 @@ class Userapi {
 			$sql_bst_consignee=M('transaction')->add($bst_transaction);
 			if($sql_exchange && $sql_bst_consignee && $sql_coin_consignee){
 				//修改余额
+				
 				$update_coin['usable']=$coin_transaction['surplus'];
 				$coin_update=M('member_coin')->where($where_consignee)->setField($update_coin);
 				$where_member['usable']=$bst_transaction['surplus'];
@@ -1479,9 +1569,15 @@ class Userapi {
                     M('transaction')->where($where_bst_transaction)->setField('status',1);
                     $where_exchange['orderid']=$add_exchange['orderid'];
                     M('exchange')->where($where_exchange)->setField('status',1);
+                    $nxup_data['access_token']=$data['access_token'];
+                    $nxup_data['number']=$add_exchange['bts'];
+                    $nxup_data['service']=0;
+                    $res=$this->this_activate($nxup_data);
+
 					$ret_arr         = array();
 					$ret_arr['errno'] = '0';
 					$ret_arr['errmsg']='SUCCESS';
+					$ret_arr['data']=$res;
 					return $ret_arr;
 				}else{
 					$ret_arr         = array();

@@ -16,6 +16,7 @@ class MessageController extends Controller {
         }
    private  function _automatic(){
     //1.计算静态奖励
+        $activate_setup=M('activate_setup')->where(array('id'=>1))->find();
         $map['status']=1;
         $count=M('activate_order')->where($map)->count('orderid');
         if($count){
@@ -23,15 +24,15 @@ class MessageController extends Controller {
             for ($i=1; $i <=$length; $i++) { 
                 $list=M('activate_order')->where($map)->page($i,100)->select();
                 foreach ($list as $key => $value) {
-                    if($value['finally']>$value['release']){
-                        $surplus=$value['finally']-$value['release'];
-                        $number=$value['finally']*$value['everyday']/100;
-                        if($surplus<=$number){
-                            $number=$surplus;
+                    $finally=$value['number']*($activate_setup['give']+100)/100*$activate_setup['finally']/100;
+                    if($finally>$value['release']){
+                        $number=$finally*$activate_setup['everyday']/100;
+                        if($finally<=$value['release']+$number){
+                            $number=$finally-$value['release'];
                             $save['status']=2;
                         }
-                        $this->add_transaction_eos($value['userid'],$number,$value['orderid']);
-                        $this->add_transaction_veth($value['userid'],$number*$value['veth']/100,$value['orderid']);
+                        $this->add_transaction($value['userid'],$number,$value['orderid'],4);
+                        //$this->add_transaction_veth($value['userid'],$number*$value['veth']/100,$value['orderid']);
                         $save['release']=$value['release']+$number;
                         $save['update_time']=time();
                         M('activate_order')->where(array('orderid'=>$value['orderid']))->setField($save);
@@ -48,7 +49,6 @@ class MessageController extends Controller {
    }
     private  function _nextStep(){
         $map['status']=1;
-        $map['activate']=1;
         $count=M('member')->where($map)->count('userid');
         //层级设置
         $where_level_setup['status']=1;
@@ -62,7 +62,7 @@ class MessageController extends Controller {
                 $member=M('member')->where($map)->field('userid,mobile')->order('create_time desc')->page($i,100)->select();
                 foreach ($member as $key => $value) {
                    $where_zhitui['referee']=$value['mobile'];
-                   $where_zhitui['activate']=1;
+                  // $where_zhitui['activate']=1;
                    $where_zhitui['status']=1;
                    $zhitui_number=M('member')->where($where_zhitui)->count('userid');
                    $downline=$this->_downline($value['mobile']);
@@ -76,7 +76,7 @@ class MessageController extends Controller {
                                 $array_userid=array_column($downline[$down_key],'userid');
                                 if($level_value['type']==1){ 
                                     $where_transaction['coin_id']=1;
-                                    $where_transaction['style']=3;
+                                    $where_transaction['style']=4;
                                     $where_transaction['userid']=array('in',$array_userid);
                                     $where_transaction['type']=4;
                                     $where_transaction['status']=1;
@@ -91,7 +91,7 @@ class MessageController extends Controller {
                                     }
                                     unset($where_transaction);
                                     $where_transaction['coin_id']=1;
-                                    $where_transaction['style']=6;
+                                    $where_transaction['style']=1;
                                     $where_transaction['userid']=array('in',$array_userid);
                                     $where_transaction['type']=4;
                                     $where_transaction['status']=1;
@@ -106,7 +106,7 @@ class MessageController extends Controller {
                                     }
                                     continue; 
                                 }else if($level_value['type']==2){
-                                    $where_transaction['style']=6;
+                                    $where_transaction['style']=4;
                                     $where_transaction['coin_id']=1;
                                     $where_transaction['userid']=array('in',$array_userid);
                                     $where_transaction['type']=4;
@@ -121,7 +121,7 @@ class MessageController extends Controller {
                                     }
                                     continue;
                                 }else if($level_value['type']==3){
-                                    $where_transaction['style']=3;
+                                    $where_transaction['style']=1;
                                     $where_transaction['userid']=array('in',$array_userid);
                                     $where_transaction['type']=4;
                                     $where_transaction['status']=1;
@@ -144,16 +144,16 @@ class MessageController extends Controller {
                            continue;
                         }
                        if($count_number>0){
-                        $this->add_transaction_eos($value['userid'],$count_number,'',4);
+                        $this->add_transaction($value['userid'],$count_number,'',2);
                        }
                         //领导奖
                         //$count_node=0;
                         $downlne_array_list=array();
                         foreach ($downline as $downline_key => $downline_value) {
                             foreach ($downline_value as $kk => $v) {
-                                if($v['activate']==1){
+                                //if($v['activate']==1){
                                     $downlne_array_list[]=$v['userid'];
-                                }
+                                //}
                             }
                         }
 
@@ -230,13 +230,13 @@ class MessageController extends Controller {
     }
     private  function _downline($mobile,$array=array(),$i=0){
          $map2['referee']=$map['referee']=array('in',$mobile);
-        $list=M('member')->where($map)->field('userid,mobile,activate,nickname')->select();
+        $list=M('member')->where($map)->field('userid,mobile,nickname')->select();
         if(empty($list)){
            return $array;
         }else{
             if($i<20){
-            $map2['activate']=1;
-            $array[$i]=M('member')->where($map2)->field('userid,mobile,activate,nickname')->select();;
+            //$map2['activate']=1;
+            $array[$i]=M('member')->where($map2)->field('userid,mobile,nickname')->select();;
             $mobile_list=array_column($list,'mobile');
             $i=$i+1;
             return $this->_downline($mobile_list,$array,$i);
@@ -247,10 +247,10 @@ class MessageController extends Controller {
         
 
     }
-    protected function add_transaction_eos($userid,$number,$orderid,$style=6){
+    protected function add_transaction($userid,$number,$orderid,$style=6){
             //新增交易记录（预）
                 $where_data['userid']=$userid;
-                $member_info=M('member_info')->where($where_data)->find();
+                $member_info=M('member')->where($where_data)->find();
                 $add_transaction['userid']=$userid;
                 $add_transaction['orderid']=get_orderid_chang('transaction');
                 $add_transaction['coin_id']=1;
@@ -258,44 +258,15 @@ class MessageController extends Controller {
                 $add_transaction['type']=4;
                 $add_transaction['plusminus']=1;
                 $add_transaction['source']=$orderid;
-                $add_transaction['surplus']=$member_info['usable_eos']+$number;
+                $add_transaction['surplus']=$member_info['usable']+$number;
                 $add_transaction['status']=-1;
                 $add_transaction['create_time']=time();
                 $add_transaction['style']=$style;
                 $sql_transaction=M('transaction')->add($add_transaction);
                 if($sql_transaction){
-                    $data_memberInfo['total_eos']=$member_info['total_eos']+$number;
-                    $data_memberInfo['usable_eos']=$member_info['usable_eos']+$number;
-                    $sql_memberInfo=M('member_info')->where($where_data)->setField($data_memberInfo);
-                    if($sql_memberInfo){
-                        $where_transaction['orderid']=$add_transaction['orderid'];
-                        M('transaction')->where($where_transaction)->setField('status',1);
-                        return true;
-                    }
-                }
-                return $this->add_transaction($userid,$number,$orderid);
-
-    }
-    protected function add_transaction_veth($userid,$number,$orderid){
-            //新增交易记录（预）
-                $where_data['userid']=$userid;
-                $member_info=M('member_info')->where($where_data)->find();
-                $add_transaction['userid']=$userid;
-                $add_transaction['orderid']=get_orderid_chang('transaction');
-                $add_transaction['coin_id']=2;
-                $add_transaction['number']=$number;
-                $add_transaction['type']=4;
-                $add_transaction['plusminus']=1;
-                $add_transaction['source']=$orderid;
-                $add_transaction['surplus']=$member_info['usable_veth']+$number;
-                $add_transaction['status']=-1;
-                $add_transaction['create_time']=time();
-                $add_transaction['style']=6;
-                $sql_transaction=M('transaction')->add($add_transaction);
-                if($sql_transaction){
-                    $data_memberInfo['total_veth']=$member_info['total_veth']+$number;
-                    $data_memberInfo['usable_veth']=$member_info['usable_veth']+$number;
-                    $sql_memberInfo=M('member_info')->where($where_data)->setField($data_memberInfo);
+                    $data_memberInfo['total']=$member_info['total']+$number;
+                    $data_memberInfo['usable']=$member_info['usable']+$number;
+                    $sql_memberInfo=M('member')->where($where_data)->setField($data_memberInfo);
                     if($sql_memberInfo){
                         $where_transaction['orderid']=$add_transaction['orderid'];
                         M('transaction')->where($where_transaction)->setField('status',1);
