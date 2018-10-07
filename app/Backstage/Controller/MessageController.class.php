@@ -24,7 +24,7 @@ class MessageController extends Controller {
             for ($i=1; $i <=$length; $i++) { 
                 $list=M('activate_order')->where($map)->page($i,100)->select();
                 foreach ($list as $key => $value) {
-                    $finally=$value['number']*($activate_setup['give']+100)/100*$activate_setup['finally']/100;
+                    $finally=$value['number']*($activate_setup['give']+100)/100 ;
                     if($finally>$value['release']){
                         $number=$finally*$activate_setup['everyday']/100;
                         if($finally<=$value['release']+$number){
@@ -161,18 +161,28 @@ class MessageController extends Controller {
                         if(empty($downline_number)){
                             continue;  
                         }
+                        //获取旗下会员的兑换总数
+                        $where_sum['userid']=array('in',$downlne_array_list);
+
+                        $where_sum['status']=1;
+                        $where_sum['type']=5;
+                        $sum_number=M('transaction')->where($where_sum)->sum('number');
+                        
+                        if(empty($sum_number)){
+                            $sum_number=0;
+                        }
                         foreach ($node_setup as $node_key => $node_value) {
-                             if($zhitui_number>=$node_value['condition'] && $downline_number>=$node_value['group']){
+                             if($sum_number>=$node_value['condition'] && $downline_number>=$node_value['group']){
                                     $where_activate['userid']=array('in',$downlne_array_list);
                                     $where_activate['status']=1;
                                     $start_time=strtotime(date('Y-m-d')." 00:00:00")-86400;
                                     $end_time=strtotime(date('Y-m-d')." 23:59:59")-86400;
                                     $where_activate['create_time'] = array(array('egt',$start_time),array('lt',$end_time),'and');
-                                    $number_activate_order=M('activate_order')->where($where_activate)->sum('eos');
+                                    $number_activate_order=M('activate_order')->where($where_activate)->sum('number');
                                     if($number_activate_order){
                                        $count_node=$number_activate_order*$node_value['bonus']/100;
                                         if($count_node>0){
-                                            $this->add_transaction_eos($value['userid'],$count_node,'',5);
+                                            $this->add_transaction($value['userid'],$count_node,'',3);
                                          }
                                     }
                                 break;

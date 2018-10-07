@@ -7,7 +7,7 @@
 		<!-- Basic -->
     	<meta charset="UTF-8" />
 
-		<title>充币详情</title>
+		<title>节点设置</title>
 		
 		<!-- Mobile Metas -->
 	    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
@@ -201,13 +201,13 @@
 								<div class="panel-body">
 									<div class="form-group">
 										<input type="text"  class="form-control hide" name="id" value="[{$_GET['id']}]"/>								
-										<label class="col-md-3 control-label">满足直推数</label>
+										<label class="col-md-3 control-label">满足总业绩</label>
 										<div class="col-md-6">
 											<div class="input-group col-sm-7">
 												<span class="input-group-addon">
 														<i class="fa  fa-tag"></i>
 													</span>
-													<input type="text"  class="form-control  must int" name="condition" value="[{$data['condition']}]" placeholder="请输入满足直推数"  />
+													<input type="text"  class="form-control  must float" name="condition" value="[{$data['condition']}]" placeholder="请输入满足总业绩"  />
 												</div>
 												<span class="help-block hide"></span>
 										</div>

@@ -1638,34 +1638,15 @@ class AdminapiController extends Controller {
         $map['id']=$data['id'];
         $map['status']=1;
         $recharge=M('activate_setup')->where($map)->find();
-        var_dump($recharge['everyday']);
-        var_dump($data['everyday']);
         if(empty($recharge)){
             $ret_arr         = array();
             $ret_arr['errno'] = '30013';
             $ret_arr['errmsg']='设置不存在';
             $this->ajaxReturn($ret_arr,'JSON'); 
         }
-        $update_data['update_time']=time();
-        $update_data['eos']=$data['eos'];
-        $update_data['card']=$data['card'];
-        $update_data['finally']=$data['finally'];
-        $update_data['everyday']=$data['everyday'];
-        $update_data['veth']=$data['veth'];
-        $update_data['spread']=$data['spread'];
-        $res=M('activate_setup')->where($map)->setField($update_data);
-        if($recharge['everyday']!==$data['everyday']){
-            $change['setup_id']=$data['id'];
-            $value = $data['everyday'];
-            $change['status']=1;
-            $changeVerday=M('activate_order')->where($change)->setField('everyday',$value);
-        }
-        if($recharge['veth']!==$data['veth']){
-            $change['setup_id']=$data['id'];
-            $veth = $data['veth'];
-            $change['status']=1;
-            $changeVerday=M('activate_order')->where($change)->setField('veth',$veth);
-        }
+        $data['update_time']=time();
+       
+        $res=M('activate_setup')->where($map)->setField($data);
         if($res){
             $ret_arr         = array();
             $ret_arr['errno'] = '0';

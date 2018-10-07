@@ -201,39 +201,35 @@
 								<div class="panel-body">
 									<div class="form-group">
 										<input type="text"  class="form-control hide" name="id" value="<?php echo ($_GET['id']); ?>"/>								
-										<label class="col-md-3 control-label">所需eos的数量</label>
+										<label class="col-md-3 control-label">赠送比例（百分比）</label>
 										<div class="col-md-6">
 											<div class="input-group col-sm-7">
-												<span class="input-group-addon">
+													<span class="input-group-addon">
 														<i class="fa  fa-tag"></i>
 													</span>
-													<input type="text"  class="form-control  must float" name="eos" value="<?php echo ($data['eos']); ?>" placeholder="请输入所需eos的数量"  />
-												</div>
-												<span class="help-block hide"></span>
-										</div>
-									</div>
-									<div class="form-group">								
-										<label class="col-md-3 control-label">所需激活卡数量</label>
-										<div class="col-md-6">
-											<div class="input-group col-sm-7">
-												<span class="input-group-addon">
-														<i class="fa  fa-tag"></i>
+													<input type="text"  class="form-control  must float" name="give" value="<?php echo ($data['give']); ?>" placeholder="请输入赠送比例（百分比）"  />
+													<span class="input-group-addon">
+														<i class="fa">%</i>
 													</span>
-													<input type="text"  class="form-control must int" name="card" value="<?php echo ($data['card']); ?>" placeholder="请输入所需激活卡数量"/>
 												</div>
+													
 												<span class="help-block hide"></span>
 										</div>
 									</div>
 									<div class="form-group">
 										<input type="text"  class="form-control hide" name="id" value="<?php echo ($_GET['id']); ?>"/>								
-										<label class="col-md-3 control-label">最终获得eos数量</label>
+										<label class="col-md-3 control-label">最终获得比例（百分比）</label>
 										<div class="col-md-6">
 											<div class="input-group col-sm-7">
-												<span class="input-group-addon">
+													<span class="input-group-addon">
 														<i class="fa  fa-tag"></i>
 													</span>
-													<input type="text"  class="form-control  must float" name="finally" value="<?php echo ($data['finally']); ?>" placeholder="请输入最终获得eos数量"  />
+													<input type="text"  class="form-control  must float" name="finally" value="<?php echo ($data['finally']); ?>" placeholder="请输入最终获得比例（百分比）"  />
+													<span class="input-group-addon">
+														<i class="fa">%</i>
+													</span>
 												</div>
+													
 												<span class="help-block hide"></span>
 										</div>
 									</div>
@@ -246,23 +242,6 @@
 														<i class="fa  fa-tag"></i>
 													</span>
 													<input type="text"  class="form-control  must float" name="everyday" value="<?php echo ($data['everyday']); ?>" placeholder="请输入每日释放率（百分比）"  />
-													<span class="input-group-addon">
-														<i class="fa">%</i>
-													</span>
-												</div>
-													
-												<span class="help-block hide"></span>
-										</div>
-									</div>
-									<div class="form-group">
-										<input type="text"  class="form-control hide" name="id" value="<?php echo ($_GET['id']); ?>"/>								
-										<label class="col-md-3 control-label">veth释放率（百分比）</label>
-										<div class="col-md-6">
-											<div class="input-group col-sm-7">
-													<span class="input-group-addon">
-														<i class="fa  fa-tag"></i>
-													</span>
-													<input type="text"  class="form-control  must float" name="veth" value="<?php echo ($data['veth']); ?>" placeholder="请输入veth释放率（百分比）"  />
 													<span class="input-group-addon">
 														<i class="fa">%</i>
 													</span>
@@ -288,7 +267,23 @@
 												<span class="help-block hide"></span>
 										</div>
 									</div>
-									
+									<div class="form-group">							
+										<label class="col-md-3 control-label">是否烧伤</label>
+										<div class="col-md-6">
+											<div class="input-group col-sm-7">
+												<span class="input-group-addon">
+														<i class="fa  fa-tag"></i>
+													</span>
+													<select class="form-control" name="burn">
+													  <option value ="1" <?php if(($data["burn"]) == "1"): ?>selected<?php endif; ?>>是</option>
+													  <option value="0" <?php if(($data["burn"]) == "0"): ?>selected<?php endif; ?>>否</option>
+													  
+													</select>
+												</div>
+													
+												<span class="help-block hide"></span>
+										</div>
+									</div>
 								<div class="form-group">								
 									<label class="col-md-3 control-label"></label>
 									<div class="col-md-9">
