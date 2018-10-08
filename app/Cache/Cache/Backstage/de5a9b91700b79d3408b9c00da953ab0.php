@@ -7,7 +7,7 @@
 		<!-- Basic -->
     	<meta charset="UTF-8" />
 
-		<title>推广设置</title>
+		<title>站内信列表</title>
 		
 		<!-- Mobile Metas -->
 	    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
@@ -125,12 +125,12 @@
 										</div>
 									</div>							
 								</li>	
-								<!--<li>
+								<li>
 									<a href="about.html"><i class="fa fa-user click"></i>个人信息</a>
 								</li>
 								<li>
-									<a href="#"><i class="fa fa-wrench"></i> 设置</a>
-								</li>-->
+									<a href="password.html"><i class="fa fa-wrench"></i>修改密码</a>
+								</li>
 								
 								<li>
 									<a href="outlogin.html" class="ajax-get" callback="outlogin_callback"><i class="fa fa-power-off"></i> 退出登录</a>
@@ -172,113 +172,68 @@
 <!-- head.html  -->	
 
 <!----------------------------------------------------------------------------------------------------------->	
-					
+		
 				<!-- Main Page -->
 				<div class="main ">
 					<!-- Page Header -->
 					<div class="page-header">
 						<div class="pull-left">
 							<ol class="breadcrumb visible-sm visible-md visible-lg">								
-								<li><a href="index.html"><i class="icon fa fa-home"></i>Home</a></li>
-								<li class="active"><i class="fa fa-cny"></i>推广设置</li>
+								<li><a href="index.html"><i class="icon fa fa-home"></i>管理后台</a></li>
+								<li class="active"><i class="fa fa-gear"></i>系统设置</li>
+								<li>站内信列表</li>
 							</ol>						
 						</div>
 						<div class="pull-right">
-							<h2>推广设置</h2>
+							<h2>站内信列表</h2>
 						</div>					
 					</div>
 					<!-- End Page Header -->
-					<div class="row">
-						<div class="col-md-12">
+
+					<div class="row" id="banner_button">
+						<div class="col-lg-12">
 							<div class="panel">
 								<div class="panel-heading bk-bg-primary">
-									<h6><i class="fa fa-indent red"></i>基础设置</h6>							
+									<h6><i class="fa fa-indent red"></i>筛选条件</h6>						
 								</div>
-								<div class="panel-body">
-									<form action="" method="post" enctype="multipart/form-data" class="form-horizontal myform1">
+								<div class="panel-body bk-bg-white bk-padding-top-30 bk-padding-bottom-20">
+									<form class="form-horizontal form-bordered myform">					
 										
-										<div class="form-group">								
-											<label class="col-md-3 control-label">短信接口地址</label>
+										<div class="form-group">
+											<label class="col-md-3 control-label">创建时间</label>
 											<div class="col-md-6">
-											<div class="input-group col-sm-6">
-													
-													<input type="text"  class="form-control  must" name="SMS_URL" value="<?php echo C('SMS_URL');?>" placeholder="请输入短信接口地址" />
+												<div class="input-daterange input-group" data-plugin-datepicker>
+													<span class="input-group-addon">
+														<i class="fa fa-calendar"></i>
+													</span>
+													<input type="text" class="form-control" name="start" />
+													<span class="input-group-addon">to</span>
+													<input type="text" class="form-control" name="end" />
 												</div>
-												<span class="help-block hide"></span>
+											</div>
 										</div>
-									</div>
-									<div class="form-group">								
-											<label class="col-md-3 control-label">短信签名</label>
-											<div class="col-md-6">
-											<div class="input-group col-sm-6">
-													
-													<input type="text"  class="form-control  must" name="SMS_LABEL" value="<?php echo C('SMS_LABEL');?>" placeholder="请输入短信签名" />
-												</div>
-												<span class="help-block hide"></span>
-										</div>
-									</div>
-									<div class="form-group">								
-											<label class="col-md-3 control-label">短信帐号</label>
-											<div class="col-md-6">
-											<div class="input-group col-sm-6">
-													
-													<input type="text"  class="form-control  must" name="SMS_USERNAME" value="<?php echo C('SMS_USERNAME');?>" placeholder="请输入短信帐号" />
-												</div>
-												<span class="help-block hide"></span>
-										</div>
-									</div>
-									<div class="form-group">								
-											<label class="col-md-3 control-label">短信密码</label>
-											<div class="col-md-6">
-											<div class="input-group col-sm-6">
-													
-													<input type="text"  class="form-control  must" name="SMS_PASSWORD" value="<?php echo C('SMS_PASSWORD');?>" placeholder="请输入短信密码" />
-												</div>
-												<span class="help-block hide"></span>
-										</div>
-									</div>
-									<div class="form-group">								
-											<label class="col-md-3 control-label">最小矿工费</label>
-											<div class="col-md-6">
-											<div class="input-group col-sm-6">
-													
-													<input type="text"  class="form-control  must float" name="SERVICE_START" value="<?php echo C('SERVICE_START');?>" placeholder="请输入最小矿工费" /><span class="input-group-addon">BST</span>
-												</div>
-												<span class="help-block hide"></span>
-										</div>
-									</div>
-									<div class="form-group">								
-											<label class="col-md-3 control-label">最大矿工费</label>
-											<div class="col-md-6">
-											<div class="input-group col-sm-6">
-													
-													<input type="text"  class="form-control  must float" name="SERVICE_END" value="<?php echo C('SERVICE_END');?>" placeholder="请输入最大矿工费" /><span class="input-group-addon">BST</span>
-												</div>
-												<span class="help-block hide"></span>
-										</div>
-									</div>
-									
-									<div class="form-group">								
+										
+										<input type="text" name="page" value="1" class="hide" id="input-page">
+										<div class="form-group">
 											<label class="col-md-3 control-label"></label>
-									<div class="col-md-9">
-									<a href="adminapi.html?url=admin_bonus_config" class="btn btn-success ajax-post"  target-form="myform1" callback="edit_callback">确认提交</a>
-									<div class="radio-custom radio-inline"></div>
-									
-									</div>
+											<div class="col-md-6">
+											<a class="btn btn-primary ajax-post" href="adminapi.html?url=admin_mail_list" id="in-list-click" target-form="myform"  callback="in_callback">查 询</a>
+											</div>
+										</div>
+									</form>										
 								</div>
-									</form>
-								</div>	
-							</div>	
-						</div>					
-					</div>						   
-					<div class="row">
+							</div>
+						</div>
+					</div>					
+					<div class="row" id="banner_list">					
 						<div class="col-lg-12">                           
 							<div class="panel">                                
 								<div class="panel-heading bk-bg-primary">
-									<h6><i class="fa fa-table red"></i><span class="break"></span>投BST设置</h6>
-									<a class="btn btn-primary ajax-get hide" href="adminapi.html?url=admin_activate_setup_list" id="in-list-click" callback="in_callback">查 询</a>
+									<h6><i class="fa fa-table red"></i><span class="break"></span>站内信列表</h6>
+								
 								</div>										
 								<div class="panel-body">
+									<a class="btn btn-primary click" style="float: right" href="mail/edit.html" >新增站内信</a>
 									<div class="table-responsive">
 										<table class="table table-hover">
 											<thead>
@@ -286,12 +241,10 @@
 													<th>
 														#
 													</th>
-													<th>赠送比例</th>
-													<th>最终获得比例</th>
-													<th>每日释放率</th>
-													<th>直推分红比例</th>
-													<th>是否烧伤</th>
-													<th>操作</th>
+													<th>标题</th>
+													<th>用户昵称</th>
+													<th>创建时间</th>
+													<th id="edit_auth">操作</th>
 												</tr>
 											</thead>
 											<tbody id="api-in-list">
@@ -308,116 +261,9 @@
 								
 							</div>                 
 						</div>					
-					</div>
-					<div class="row">
-						<div class="col-lg-12">                           
-							<div class="panel">                                
-								<div class="panel-heading bk-bg-primary">
-									<h6><i class="fa fa-table red"></i><span class="break"></span>层级奖设置</h6>
-									<a class="btn btn-primary ajax-get hide" href="adminapi.html?url=admin_distribution_setup_list" id="distribution-list-click" callback="distribution_callback">查 询</a>
-								</div>										
-								<div class="panel-body">
-									<div class="table-responsive">
-										<table class="table table-hover">
-											<thead>
-												<tr>
-													<th>
-														#
-													</th>
-													<th>成员层级</th>
-													<th>满足直推数</th>
-													<th>分红比例（百分比）</th>
-													<th>分红类型 </th>
-													<th>操作</th>
-												</tr>
-											</thead>
-											<tbody id="api-distribution-list">
-												
-											</tbody>
-										</table>
-										<div  style="display: block;">
-											<ul id="page" data-hover="" class="pagination mtm mbm" style="display: block; float:right;">
-                                            
-                                        	</ul>
-                                        </div>	
-									</div>
-								</div>
-								
-							</div>                 
-						</div>					
-					</div>
-					<div class="row">
-						<div class="col-lg-12">                           
-							<div class="panel">                                
-								<div class="panel-heading bk-bg-primary">
-									<h6><i class="fa fa-table red"></i><span class="break"></span>节点奖设置</h6>
-									<a class="btn btn-primary ajax-get hide" href="adminapi.html?url=admin_node_setup_list" id="node-list-click" callback="node_callback">查 询</a>
-								</div>										
-								<div class="panel-body">
-									<div class="table-responsive">
-										<table class="table table-hover">
-											<thead>
-												<tr>
-													<th>
-														#
-													</th>
-													
-													<th>满足总业绩</th>
-													<th>满足团队人数</th>
-													<th>分红比例</th>
-													<th>操作</th>
-												</tr>
-											</thead>
-											<tbody id="api-node-list">
-												
-											</tbody>
-										</table>
-										<div  style="display: block;">
-											<ul id="page" data-hover="" class="pagination mtm mbm" style="display: block; float:right;">
-                                            
-                                        	</ul>
-                                        </div>	
-									</div>
-								</div>
-								
-							</div>                 
-						</div>					
-					</div>
-					<div class="row">
-						<div class="col-lg-12">                           
-							<div class="panel">                                
-								<div class="panel-heading bk-bg-primary">
-									<h6><i class="fa fa-table red"></i><span class="break"></span>加速释放设置</h6>
-									<a class="btn btn-primary ajax-get hide" href="adminapi.html?url=admin_quicken_setup_list" id="quicken-list-click" callback="quicken_callback">查 询</a>
-								</div>										
-								<div class="panel-body">
-									<div class="table-responsive">
-										<table class="table table-hover">
-											<thead>
-												<tr>
-													<th>
-														#
-													</th>
-													<th>第几次释放</th>
-													<th>释放比例（百分比）</th>
-													<th>操作</th>
-												</tr>
-											</thead>
-											<tbody id="api-quicken-list">
-												
-											</tbody>
-										</table>
-										<div  style="display: block;">
-											<ul id="page" data-hover="" class="pagination mtm mbm" style="display: block; float:right;">
-                                            
-                                        	</ul>
-                                        </div>	
-									</div>
-								</div>
-								
-							</div>                 
-						</div>					
-					</div>
+					</div>						
+				<!-- End Main Page -->		
+		
 				<!-- Usage -->
 				
 				<!-- End Usage -->
@@ -484,8 +330,8 @@
 		
 		<!-- Pages JS -->
 		<script src="/bst/template/Npts/assets/js/pages/form-elements.js"></script>
-		<script src="/bst/template/Npts/assets/public/js/ajax.js"></script>
-		<script src="/bst/template/Npts/assets/js/pages/bonus.js"></script>
+		<script src="/bst/template/Npts/assets/public/js/ajax.js?v=1.1"></script>
+		<script src="/bst/template/Npts/assets/js/pages/mail.js"></script>
 		
 		<!-- end: JavaScript-->
 		

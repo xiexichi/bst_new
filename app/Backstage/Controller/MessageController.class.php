@@ -24,9 +24,9 @@ class MessageController extends Controller {
             for ($i=1; $i <=$length; $i++) { 
                 $list=M('activate_order')->where($map)->page($i,100)->select();
                 foreach ($list as $key => $value) {
-                    $finally=$value['number']*($activate_setup['give']+100)/100 ;
+                    $finally=$value['number']*($activate_setup['give']+100)/100*$activate_setup['finally']/100;
                     if($finally>$value['release']){
-                        $number=$finally*$activate_setup['everyday']/100;
+                        $number=$value['number']*($activate_setup['give']+100)/100*$activate_setup['everyday']/100;
                         if($finally<=$value['release']+$number){
                             $number=$finally-$value['release'];
                             $save['status']=2;
@@ -286,28 +286,46 @@ class MessageController extends Controller {
                 return $this->add_transaction($userid,$number,$orderid);
 
     }
-    public function eos_search(){
-        $json=file_get_contents(C('EOS_URL'));
-        $sql_json=M('eos_json')->where(array('id'=>1))->getField('json');
-        if($json!=$sql_json){
-        M('eos_json')->where(array('id'=>1))->setField('json',$json);
-        $data=json_decode($json,true);
-        foreach ($data as $key => $value) {
-            $map['orderid']=$value['_id'];
-            $res=M('eos_order')->where($map)->find();
-            if(empty($res)){
-                foreach ($value['contract_actions'] as $transfer => $vo) {
-                   if($vo['action']=='transfer'){
-                        $add['orderid']=$value['_id'];
-                        $add['number']=$vo['data']['quantity'];
-                        $add['from']=$vo['data']['from'];
-                        $add['to']=$vo['data']['to'];
-                        $add['create_time']=strtotime($value['timestamp']);
-                        M('eos_order')->add($add);
-                   }
-               }
-           }
-        }
+    public function coin_search(){
+        $where_coin['status']=1;
+        $list=M('coin')->where($where_coin)->select();
+        if($list){
+            foreach ($list as $key => $value) {
+                $json=file_get_contents($value['select_link']);
+                $sql_json=M('eos_json')->where(array('id'=>$value['id']))->getField('json');
+                if($json!=$sql_json){
+                    M('eos_json')->where(array('id'=>$value['id']))->delete();
+                    $add['id']=$value['id'];
+                    $add['json']=$json;
+                     M('eos_json')->add($add);
+                     unset($add);
+                    $data=json_decode($json,true);
+
+                    foreach ($data as $key2 => $value2) {
+                        $map['orderid']=$value2['_id'];
+                        $map['coin_id']=$value['id'];
+                        $res=M('eos_order')->where($map)->find();
+                       
+                        if(empty($res)){
+                            foreach ($value2['contract_actions'] as $transfer => $vo) {
+
+                               if($vo['action']=='transfer'){
+
+                                    $add['orderid']=$value2['_id'];
+                                    $add['number']=$vo['data']['quantity'];
+                                    $add['from']=$vo['data']['from'];
+                                    $add['to']=$vo['data']['to'];
+                                    $add['coin_id']=$value['id'];
+                                    $add['create_time']=strtotime($value2['timestamp']);
+                                    print_r($add);
+                                    M('eos_order')->add($add);
+                               }
+                           }
+                       }
+                    } 
+                }
+            }
+        
         }
     }
 }

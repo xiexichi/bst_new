@@ -43,5 +43,13 @@ class WorksController extends PublicController {
 
 		$this->display('page-works-distribution');
 	}
-	
+	public function quicken(){
+		$id=I('id');
+    	if($id){
+    		$works=M('quicken_setup')->where(array('id'=>$id))->find();
+			$this->assign('data',$works);
+    	}
+
+		$this->display('page-works-quicken');
+	}
 }

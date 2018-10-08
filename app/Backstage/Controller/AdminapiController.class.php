@@ -63,6 +63,10 @@ class AdminapiController extends Controller {
                 case 'admin_price_success':$this->admin_price_success($data);break;
                 case 'admin_coin_list':$this->admin_coin_list($data);break;
                 
+                case 'admin_quicken_setup_list_edit':$this->admin_quicken_setup_list_edit($data);break;
+                case 'admin_mail_list':$this->admin_mail_list($data);break;
+                 case 'admin_mail_success':$this->admin_mail_success($data);break;
+
 			}
 		}
         if(IS_GET){
@@ -81,6 +85,8 @@ class AdminapiController extends Controller {
                 case 'admin_activate_setup_list':$this->admin_activate_setup_list($data);break;
                 case 'admin_distribution_setup_list':$this->admin_distribution_setup_list($data);break;
                 case 'admin_node_setup_list':$this->admin_node_setup_list($data);break;
+                case 'admin_quicken_setup_list':$this->admin_quicken_setup_list($data);break;
+                case 'admin_mail_del':$this->admin_mail_del($data);break;
                
             }
         }
@@ -2102,4 +2108,199 @@ class AdminapiController extends Controller {
                 $this->ajaxReturn($ret_arr,'JSON');
         }
     }
+    protected function admin_quicken_setup_list_edit($data){
+        $userid=$this->_userAuth();
+        $keys=array('id');
+        $this->_check($data,$keys);
+        $map['id']=$data['id'];
+        $recharge=M('quicken_setup')->where($map)->find();
+        if(empty($recharge)){
+            $ret_arr         = array();
+            $ret_arr['errno'] = '30013';
+            $ret_arr['errmsg']='设置不存在';
+            $this->ajaxReturn($ret_arr,'JSON'); 
+        }
+        $res=M('quicken_setup')->where($map)->setField($data);
+        if($res){
+            $ret_arr         = array();
+            $ret_arr['errno'] = '0';
+            $ret_arr['errmsg']='SUCCESS';
+            $this->ajaxReturn($ret_arr,'JSON');
+        }else{
+            $ret_arr         = array();
+            $ret_arr['errno'] = '19998';
+            $ret_arr['errmsg']='系统级错误，请联系管理员';
+            $this->ajaxReturn($ret_arr,'JSON');   
+
+        } 
+     }
+     protected function admin_quicken_setup_list($data){
+        $userid=$this->_userAuth();
+        $lists=M('quicken_setup')->select();
+        
+        if($lists){
+
+                $ret_arr         = array();
+                $ret_arr['errno'] = '0';
+                $ret_arr['errmsg']='SUCCESS';
+                $ret_arr['data']=$lists;
+                $ret_arr['count']=M('quicken_setup')->count('id');
+                if($ret_arr['count']<=10){
+                   $ret_arr['zong_page']=1; 
+                }else{
+                    if($ret_arr['count']%10>0){
+                        $ret_arr['zong_page']=intval($ret_arr['count']/10)+1;
+                    }else{
+                        $ret_arr['zong_page']=$ret_arr['count']/10;
+                    }
+                }
+                $this->ajaxReturn($ret_arr,'JSON');
+        }else{
+                $ret_arr         = array();
+                $ret_arr['errno'] = '0';
+                $ret_arr['errmsg']='SUCCESS';
+                $ret_arr['data']=array();
+                $this->ajaxReturn($ret_arr,'JSON');
+        }
+        
+    }
+    /*
+     * 方法名:admin_mail_list
+     * 功能：获取轮播列表
+     * 传入参数:start(选填)开始时间
+     *          end(选填)结束时间
+     *          classid(选填)所属分类id
+     * 返回参数:data 轮播列表数据
+     */
+    protected function admin_mail_list($data){
+        $userid=$this->_userAuth();
+        $map['status']=array('neq',-1);
+        if($data['classid']){
+            $map['classid']=$data['classid'];
+        }
+        if($data['start']){
+            if($data['end']){
+                $start=strtotime($data['start']." 00:00:00");
+                $end=strtotime($data['end']." 23:59:59");
+            $map['create_time'] = array(array('egt',$start),array('elt',$end),'and');
+            }else{
+            $start=strtotime($data['start']." 00:00:00");
+            $map['create_time']=array('egt',$start);
+            }
+        }else{
+            if($data['end']){
+            $end=strtotime($data['end']." 23:59:59");
+            $map['create_time']=array('elt',$end);
+            }
+        }
+        $lists=M('member_mail')->where($map)->order('create_time desc')->limit(10)->page($data['page'])->select();
+        if($lists){
+            foreach ($lists as $key => $value) {
+                $lists[$key]['create_time']=time_format($value['create_time']);
+                $lists[$key]['usernickname']=get_member_name($value['userid']);
+            }
+
+                $ret_arr         = array();
+                $ret_arr['errno'] = '0';
+                $ret_arr['errmsg']='SUCCESS';
+                $ret_arr['data']=$lists;
+                $ret_arr['edit_auth']=$this->_check_page_auth('Backstage/Mail/edit');
+                $ret_arr['del_auth']=$this->_check_api_auth('admin_mail_del');
+                $ret_arr['count']=M('member_mail')->where($map)->count('id');
+                if($ret_arr['count']<=10){
+                   $ret_arr['zong_page']=1; 
+                }else{
+                    if($ret_arr['count']%10>0){
+                        $ret_arr['zong_page']=intval($ret_arr['count']/10)+1;
+                    }else{
+                        $ret_arr['zong_page']=$ret_arr['count']/10;
+                    }
+                }
+                $this->ajaxReturn($ret_arr,'JSON');
+        }else{
+                $ret_arr         = array();
+                $ret_arr['errno'] = '0';
+                $ret_arr['errmsg']='SUCCESS';
+                $ret_arr['data']=array();
+                $this->ajaxReturn($ret_arr,'JSON');
+        }
+    }
+    /*
+     * 方法名:admin_mail_del
+     * 功能：删除轮播
+     * 传入参数:id(必填) 轮播id
+     * 返回参数:成功状态码
+     */
+    protected function admin_mail_del($data){
+        $this->_userAuth();
+        $keys=array('id');
+        $this->_check($data,$keys);
+        $map['id']=$data['id'];
+        $res=M('member_mail')->where($map)->setField('status',-1);
+        if($res){
+            $ret_arr         = array();
+            $ret_arr['errno'] = '0';
+            $ret_arr['errmsg']='SUCCESS';
+            $this->ajaxReturn($ret_arr,'JSON');
+        }else{
+            $ret_arr         = array();
+            $ret_arr['errno'] = '400';
+            $ret_arr['errmsg']='系统级错误，请联系管理员';
+            $this->ajaxReturn($ret_arr,'JSON');    
+        }
+    }
+    /*
+     * 方法名:admin_mail_success
+     * 功能：修改轮播
+     * 传入参数:img_path(必填)    图片路径
+     *          id(修改必填)      轮播id
+     *          link(必填)        跳转作品id
+     *          sort(必填)        排序
+     *          classid(必填)     所属分类id
+     *          title(必填)       名称
+     *          description(选填) 描述
+     * 返回参数:成功状态码
+     */
+    protected function admin_mail_success($data){
+        $userid=$this->_userAuth();
+        if($data['id']){
+            $save['title']        = $data['title'];
+            $save['content']      = $data['content'];
+            $save['update_time']  = time();
+            $userid=M('member')->where(array('mobile'=>$data['mobile']))->getField('userid');
+            if(!$userid){
+                $ret_arr         = array();
+                $ret_arr['errno'] = '400';
+                $ret_arr['errmsg']='该手机用户不存在';
+                $this->ajaxReturn($ret_arr,'JSON');    
+            }
+            $save['userid']       = $userid;
+            $res=M('member_mail')->where(array('id'=>$data['id']))->save($save);
+        }else{
+            $add['title']        = $data['title'];
+            $add['content']      = $data['content'];
+            $add['create_time']  = time();
+            $userid=M('member')->where(array('mobile'=>$data['mobile']))->getField('userid');
+            if(!$userid){
+                $ret_arr         = array();
+                $ret_arr['errno'] = '400';
+                $ret_arr['errmsg']='该手机用户不存在';
+                $this->ajaxReturn($ret_arr,'JSON');    
+            }
+            $add['userid']       = $userid;
+            $res=M('member_mail')->add($add);
+        }
+        if($res){
+            $ret_arr         = array();
+            $ret_arr['errno'] = '0';
+            $ret_arr['errmsg']='SUCCESS';
+            $this->ajaxReturn($ret_arr,'JSON');
+        }else{
+            $ret_arr         = array();
+            $ret_arr['errno'] = '400';
+            $ret_arr['errmsg']='系统级错误，请联系管理员';
+            $this->ajaxReturn($ret_arr,'JSON');    
+        }
+    } 
+    
 }

@@ -3,8 +3,8 @@ $(document).ready(function(){
 	$("#distribution-list-click").click();
 	$("#in-list-click").click();
 	$("#node-list-click").click();
+	$("#quicken-list-click").click();
 	
-
 });
 function edit_callback(data){
 	var b='';
@@ -344,6 +344,93 @@ function node_callback(data){
 			}
 		}
 			$("#api-node-list").html(b);
+			//$("#page").html(p);	
+	}else if(data.errno==404){
+		$('#works_list').remove();
+		$('#works_button').remove();
+	}else{
+	$(".modal-title").html('出错了...');
+	$('#finish-button') .modal('show')
+	return false;
+}
+}
+function quicken_callback(data){
+	var b='';
+	var p='';
+	console.log(data);
+	if(data.errno==0){
+		$('#api-quicken-list').removeClass('hide');
+		var length=data.data.length;
+		if(length==0){
+			b+='<tr><td colspan="5" align="center">暂无数据</td></tr>';	
+		}else{
+		for(var i=0;i<length;i++){
+				b+='<tr>';
+				b+='<td>'+(i+1)+'</td>';
+				b+='<td>'+data.data[i]['month']+'</td>';
+				b+='<td>'+data.data[i]['ratio']+'%</td>';
+				b+='<td>';
+				b+='<a href="'+head_url+'works/quicken.html?id='+data.data[i]['id']+'" class=" bk-fg-darken"><small>详情</small> <i class="fa  fa-pencil"></i></a>';
+				b+='</td>';
+				b+='</tr>';
+		}
+		
+		var page=Number($('#input-page').val());
+		if(data.zong_page>1){
+			p+='<li ><span>共'+data.zong_page+'页</span></li>';
+			if(page>=3){
+				p+='<li><a href="javascript:;" data-id="-1">«</a></li>';
+				p+='<li><a href="javascript:;" data-id="'+Number(page-2)+'">'+Number(page-2)+'</a></li>';
+				p+='<li><a href="javascript:;" data-id="'+Number(page-1)+'">'+Number(page-1)+'</a></li>';
+				p+='<li class="active"><a href="javascript:;" data-id="'+page+'">'+page+'</a></li>';
+				if(data.zong_page>=(page+1)){
+					p+='<li><a href="javascript:;" data-id="'+Number(page+1)+'">'+Number(page+1)+'</a></li>';
+					if(data.zong_page>=(page+2)){
+						p+='<li><a href="javascript:;" data-id="'+Number(page+2)+'">'+Number(page+2)+'</a></li>';
+					}
+					p+='<li><a href="javascript:;" data-id="-2">»</a></li>';
+				}
+                                           
+			}else if(page==1){
+
+				p+='<li class="active"><a href="javascript:;" data-id="'+page+'">'+page+'</a></li>';
+				if(data.zong_page>=(page+1)){
+
+					p+='<li><a href="javascript:;" data-id="'+Number(page+1)+'">'+Number(page+1)+'</a></li>';
+				}
+				if(data.zong_page>=(page+2)){
+
+						p+='<li><a href="javascript:;" data-id="'+Number(page+2)+'">'+Number(page+2)+'</a></li>';
+				}
+				if(data.zong_page>=(page+3)){
+						p+='<li><a href="javascript:;" data-id="'+Number(page+3)+'">'+Number(page+3)+'</a></li>';
+				}
+				if(data.zong_page>=(page+4)){
+						p+='<li><a href="javascript:;" data-id="'+Number(page+4)+'">'+Number(page+4)+'</a></li>';
+				}
+				if(data.zong_page>=(page+1)){	
+				p+='<li><a href="javascript:;" data-id="-2">»</a></li>';
+				}
+			}else{
+				p+='<li><a href="javascript:;" data-id="-1">«</a></li>';
+				p+='<li><a href="javascript:;" data-id="'+Number(page-1)+'">'+Number(page-1)+'</a></li>';
+				p+='<li class="active"><a href="javascript:;" data-id="'+page+'">'+page+'</a></li>';
+				if(data.zong_page>=(page+1)){
+					p+='<li><a href="javascript:;" data-id="'+Number(page+1)+'">'+Number(page+1)+'</a></li>';
+				}
+				if(data.zong_page>=(page+2)){
+						p+='<li><a href="javascript:;" data-id="'+Number(page+2)+'">'+Number(page+2)+'</a></li>';
+				}
+				if(data.zong_page>=(page+3)){
+						p+='<li><a href="javascript:;" data-id="'+Number(page+3)+'">'+Number(page+3)+'</a></li>';
+				}
+				if(data.zong_page>=(page+1)){	
+				p+='<li><a href="javascript:;" data-id="-2">»</a></li>';
+				}
+			}
+			}
+		}
+			$("#api-quicken-list").html(b);
 			//$("#page").html(p);	
 	}else if(data.errno==404){
 		$('#works_list').remove();
