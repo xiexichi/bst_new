@@ -44,162 +44,158 @@ class MessageController extends Controller {
                 unset($save);
             }
         }
-    //2.执行奖励团队及层级奖励
+    //2.执行奖励团队及管理奖励
     $this->_nextStep();
    }
     private  function _nextStep(){
         $map['status']=1;
         $count=M('member')->where($map)->count('userid');
-        //层级设置
         $where_level_setup['status']=1;
-        $where_level_setup['bonus']=array('gt',0);
-        $level_setup=M('distribution_setup')->where($where_level_setup)->order('level desc')->select();
-        $node_setup=M('node_setup')->where($where_level_setup)->order('level desc')->select();
+        $node_setup=M('node_setup')->where($where_level_setup)->order('`level` desc')->select();
         if($count){
             $length=ceil($count/100);
 
             for ($i=1; $i <=$length; $i++) { 
                 $member=M('member')->where($map)->field('userid,mobile')->order('create_time desc')->page($i,100)->select();
                 foreach ($member as $key => $value) {
-                   $where_zhitui['referee']=$value['mobile'];
-                  // $where_zhitui['activate']=1;
-                   $where_zhitui['status']=1;
-                   $zhitui_number=M('member')->where($where_zhitui)->count('userid');
-                   $downline=$this->_downline($value['mobile']);
-                   if($zhitui_number && $downline){
-                        //管理奖（层级收益）
-                        $count_number=0;
-                        foreach ($level_setup as $level_key => $level_value) {
-                            $down_key=$level_value['level']-1;
-                            $down_key=(int)$down_key;
-                           if($zhitui_number>=$level_value['condition'] && $downline[$down_key]){
-                                $array_userid=array_column($downline[$down_key],'userid');
-                                if($level_value['type']==1){ 
-                                    $where_transaction['coin_id']=1;
-                                    $where_transaction['style']=4;
-                                    $where_transaction['userid']=array('in',$array_userid);
-                                    $where_transaction['type']=4;
-                                    $where_transaction['status']=1;
-                                    $start_time=strtotime(date('Y-m-d')." 00:00:00")-86400;
-                                    $end_time=strtotime(date('Y-m-d')." 23:59:59")-86400;
-                                    $where_transaction['create_time'] = array(array('egt',$start_time),array('lt',$end_time),'and');
-                                    $number_type_3=M('transaction')->where($where_transaction)->sum('number');
- 
-                                    if($number_type_3){
-                                        $profit=$number_type_3*$level_value['bonus']/100;
-                                        $count_number=$count_number+$profit;
-                                    }
-                                    unset($where_transaction);
-                                    $where_transaction['coin_id']=1;
-                                    $where_transaction['style']=1;
-                                    $where_transaction['userid']=array('in',$array_userid);
-                                    $where_transaction['type']=4;
-                                    $where_transaction['status']=1;
-                                    $start_time=strtotime(date('Y-m-d')." 00:00:00");
-                                    $end_time=strtotime(date('Y-m-d')." 23:59:59");
-                                    $where_transaction['create_time'] = array(array('egt',$start_time),array('lt',$end_time),'and');
-                                    $number_type_6=M('transaction')->where($where_transaction)->sum('number');
-                                   
-                                   if($number_type_6){
-                                        $profit=$number_type_6*$level_value['bonus']/100;
-                                        $count_number=$count_number+$profit;
-                                    }
-                                    continue; 
-                                }else if($level_value['type']==2){
-                                    $where_transaction['style']=4;
-                                    $where_transaction['coin_id']=1;
-                                    $where_transaction['userid']=array('in',$array_userid);
-                                    $where_transaction['type']=4;
-                                    $where_transaction['status']=1;
-                                    $start_time=strtotime(date('Y-m-d')." 00:00:00");
-                                    $end_time=strtotime(date('Y-m-d')." 23:59:59");
-                                    $where_transaction['create_time'] = array(array('egt',$start_time),array('lt',$end_time),'and');
-                                    $number_type_6=M('transaction')->where($where_transaction)->sum('number');
-                                    if($number_type_6){
-                                       $profit=$number_type_6*$level_value['bonus']/100;
-                                        $count_number=$count_number+$profit;
-                                    }
-                                    continue;
-                                }else if($level_value['type']==3){
-                                    $where_transaction['style']=1;
-                                    $where_transaction['userid']=array('in',$array_userid);
-                                    $where_transaction['type']=4;
-                                    $where_transaction['status']=1;
-                                    $where_transaction['coin_id']=1;
-                                    $start_time=strtotime(date('Y-m-d')." 00:00:00")-86400;
-                                    $end_time=strtotime(date('Y-m-d')." 23:59:59")-86400;
-                                    $where_transaction['create_time'] = array(array('egt',$start_time),array('lt',$end_time),'and');
-                                    $number_type_3=M('transaction')->where($where_transaction)->sum('number');
-                                    if($number_type_3){
-                                       $profit=$number_type_3*$level_value['bonus']/100;
-                                        $count_number=$count_number+$profit;
-                                    }
-                                    continue; 
-                                }else{
-                                    continue; 
-                                }
-
-                                
-                           }
-                           continue;
-                        }
-                       if($count_number>0){
-                        $this->add_transaction($value['userid'],$count_number,'',2);
-                       }
-                        //领导奖
-                        //$count_node=0;
-                        $downlne_array_list=array();
+                    $where_zhitui['referee']=$value['mobile'];
+                    $where_zhitui['status']=1;
+                    $zhitui_list=M('member')->where($where_zhitui)->field('userid,mobile')->select();
+                    $zhitui_array_list=array_column($zhitui_list,'userid');
+                   //1.会员总业绩
+                    $downline=$this->_downline($value['mobile']);
+                    $downlne_array_list=array();
                         foreach ($downline as $downline_key => $downline_value) {
                             foreach ($downline_value as $kk => $v) {
-                                //if($v['activate']==1){
                                     $downlne_array_list[]=$v['userid'];
-                                //}
                             }
                         }
-
-                        $downline_number=count($downlne_array_list);
-                        if(empty($downline_number)){
-                            continue;  
+                    $downlne_array_list[]=$value['userid'];
+                    $where_sum['userid']=array('in',$downlne_array_list);
+                    $where_sum['status']=1;
+                    $where_sum['type']=5;
+                    $sum_number=M('transaction')->where($where_sum)->sum('number');
+                    //2.会员所在节点
+                    $level=0;
+                    $user_bili=0;
+                    foreach ($node_setup as $node_key => $node_value) {
+                         if($sum_number>=$node_value['condition']){
+                            $level=$node_value['level'];
+                            $user_bili=$node_value['bonus'];
+                            //3.管理奖励
+                            if($node_value['type']==1){ 
+                                $where_transaction['coin_id']=1;
+                                $where_transaction['style']=1;
+                                $where_transaction['userid']=array('in',$zhitui_array_list);
+                                $where_transaction['type']=4;
+                                $where_transaction['status']=1;
+                                $start_time=strtotime(date('Y-m-d')." 00:00:00")-86400;
+                                $end_time=strtotime(date('Y-m-d')." 23:59:59")-86400;
+                                $where_transaction['create_time'] = array(array('egt',$start_time),array('lt',$end_time),'and');
+                                $number_type_3=M('transaction')->where($where_transaction)->sum('number');
+                                if($number_type_3){
+                                    $profit=$number_type_3*$node_value['bonus']/100;
+                                    $count_number=$count_number+$profit;
+                                }
+                                unset($where_transaction);
+                                $where_transaction['coin_id']=1;
+                                $where_transaction['style']=4;
+                                $where_transaction['userid']=array('in',$zhitui_array_list);
+                                $where_transaction['type']=4;
+                                $where_transaction['status']=1;
+                                $start_time=strtotime(date('Y-m-d')." 00:00:00");
+                                $end_time=strtotime(date('Y-m-d')." 23:59:59");
+                                $where_transaction['create_time'] = array(array('egt',$start_time),array('lt',$end_time),'and');
+                                $number_type_6=M('transaction')->where($where_transaction)->sum('number');
+                                if($number_type_6){
+                                        $profit=$number_type_6*$node_value['bonus']/100;
+                                        $count_number=$count_number+$profit;
+                                }
+                            }else if($node_value['type']==2){
+                                $where_transaction['style']=4;
+                                $where_transaction['coin_id']=1;
+                                $where_transaction['userid']=array('in',$zhitui_array_list);
+                                $where_transaction['type']=4;
+                                $where_transaction['status']=1;
+                                $start_time=strtotime(date('Y-m-d')." 00:00:00");
+                                $end_time=strtotime(date('Y-m-d')." 23:59:59");
+                                $where_transaction['create_time'] = array(array('egt',$start_time),array('lt',$end_time),'and');
+                                $number_type_6=M('transaction')->where($where_transaction)->sum('number');
+                                if($number_type_6){
+                                   $profit=$number_type_6*$node_value['bonus']/100;
+                                    $count_number=$count_number+$profit;
+                                }
+                            }else if($node_value['type']==3){
+                                $where_transaction['style']=1;
+                                $where_transaction['userid']=array('in',$zhitui_array_list);
+                                $where_transaction['type']=4;
+                                $where_transaction['status']=1;
+                                $where_transaction['coin_id']=1;
+                                $start_time=strtotime(date('Y-m-d')." 00:00:00")-86400;
+                                $end_time=strtotime(date('Y-m-d')." 23:59:59")-86400;
+                                $where_transaction['create_time'] = array(array('egt',$start_time),array('lt',$end_time),'and');
+                                $number_type_3=M('transaction')->where($where_transaction)->sum('number');
+                                if($number_type_3){
+                                   $profit=$number_type_3*$node_value['bonus']/100;
+                                    $count_number=$count_number+$profit;
+                                }
+                            }
+                            if($count_number>0){
+                                $this->add_transaction($value['userid'],$count_number,'',2);
+                            }
+                            break;
                         }
-                        //获取旗下会员的兑换总数
-                        $where_sum['userid']=array('in',$downlne_array_list);
+                   
+                    }
 
-                        $where_sum['status']=1;
-                        $where_sum['type']=5;
-                        $sum_number=M('transaction')->where($where_sum)->sum('number');
-                        
-                        if(empty($sum_number)){
-                            $sum_number=0;
-                        }
-                        foreach ($node_setup as $node_key => $node_value) {
-                             if($sum_number>=$node_value['condition'] && $downline_number>=$node_value['group']){
-                                    $where_activate['userid']=array('in',$downlne_array_list);
-                                    $where_activate['status']=1;
-                                    $start_time=strtotime(date('Y-m-d')." 00:00:00")-86400;
-                                    $end_time=strtotime(date('Y-m-d')." 23:59:59")-86400;
-                                    $where_activate['create_time'] = array(array('egt',$start_time),array('lt',$end_time),'and');
-                                    $number_activate_order=M('activate_order')->where($where_activate)->sum('number');
-                                    if($number_activate_order){
-                                       $count_node=$number_activate_order*$node_value['bonus']/100;
-                                        if($count_node>0){
-                                            $this->add_transaction($value['userid'],$count_node,'',3);
-                                         }
+                    //团队奖励
+                    $group_totle=0;
+                    if($level>0 && $user_bili>0){
+                        var_dump($value['userid']."-".$level."-".$user_bili."-".$sum_number);
+                        foreach ($zhitui_list as $key => $group) {
+                            //1.会员总业绩
+                                $group_downline=$this->_downline($group['mobile']);
+                                $group_array_list=array();
+                                foreach ($group_downline as $group_key => $group_downline_value) {
+                                    foreach ($group_downline_value as $kk => $v) {
+                                            $group_array_list[]=$v['userid'];
                                     }
-                                break;
-                             }
-                            continue;  
-                        }
-                        //统计用户收益
-                        
-                        unset($downline);
-                        unset($downlne_array_list);
-                       continue;   
-                   } 
-                   continue;
-                }
+                                }
+                                $group_array_list[]=$group['userid'];
+                                $group_sum['userid']=array('in',$group_array_list);
+                                $group_sum['status']=1;
+                                $group_sum['type']=5;
+                                $group_number=M('transaction')->where($group_sum)->sum('number');
+                                $next_level=0;
+                                foreach ($node_setup as $node_key => $node_value) {
+                                    if($group_number>=$node_value['condition']){
+                                        $next_level=$node_value['level'];
+                                        $next_bili=$node_value['bonus'];
+                                        break;
+                                     }
+                                }
+                                $start_time=strtotime(date('Y-m-d')." 00:00:00")-86400;
+                                $end_time=strtotime(date('Y-m-d')." 23:59:59")-86400;
+                                $group_sum['create_time'] = array(array('egt',$start_time),array('lt',$end_time),'and');
+                                $news_number=M('transaction')->where($group_sum)->sum('number');
+                                unset($group_sum);
+                                if($next_level==0 && $news_number>0){
 
+                                    $group_totle=$group_totle+($user_bili*$news_number/100);
+                                     var_dump($group_number); 
+                                }else if($level>$next_level){
+                                    $group_totle=(float)$group_totle+(float)(($user_bili-$next_bili)*$news_number/100);
+                                }else{
+                                   $group_totle=(float)$group_totle+(float)($user_bili*$news_number/1000); 
+                                }
+                        }
+                    }
+                    if($group_totle>0){
+                        $this->add_transaction($value['userid'],$group_totle,'',3);
+                    }
+                }
             }
-        }
+        }        
         //统计收益
         $this->_memberCount();
     }
@@ -210,7 +206,6 @@ class MessageController extends Controller {
         $map['status']=1;
         $map['plusminus']=1;
         $map['type']=4;
-        $map['style']=array('egt',3);
         $lists=M('transaction')->where($map)->field('userid')->group('userid')->select();
         foreach ($lists as $key => $value) {
             $map['userid']=$value['userid'];

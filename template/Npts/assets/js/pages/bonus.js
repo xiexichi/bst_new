@@ -89,12 +89,7 @@ function in_callback(data){
 				b+='<td>'+data.data[i]['give']+'%</td>';
 				b+='<td>'+data.data[i]['finally']+'%</td>';
 				b+='<td>'+data.data[i]['everyday']+'%</td>';
-				b+='<td>'+data.data[i]['spread']+'%</td>';
-				if(data.data[i]['burn']==1){
-					b+='<td>是</td>';
-				}else{
-					b+='<td>否</td>';
-				}
+				
 				b+='<td>';
 				b+='<a href="'+head_url+'works/activate.html?id='+data.data[i]['id']+'" class=" bk-fg-darken"><small>详情</small> <i class="fa  fa-pencil"></i></a>';
 				b+='</td>';
@@ -180,17 +175,12 @@ function distribution_callback(data){
 		for(var i=0;i<length;i++){
 				b+='<tr>';
 				b+='<td>'+(i+1)+'</td>';
-				b+='<td>第'+data.data[i]['level']+'代会员</td>';
-				b+='<td>'+data.data[i]['condition']+'</td>';
+				b+='<td>第'+data.data[i]['level']+'级</td>';
 				b+='<td>'+data.data[i]['bonus']+'%</td>';
-				if(data.data[i]['type']==1){
-				b+='<td>静态+动态</td>';	
-				}
-				if(data.data[i]['type']==2){
-				b+='<td>静态</td>';	
-				}
-				if(data.data[i]['type']==3){
-				b+='<td>动态</td>';	
+				if(data.data[i]['burn']==1){
+				b+='<td>是</td>';	
+				}else{
+				b+='<td>否</td>';	
 				}
 				b+='<td>';
 				b+='<a href="'+head_url+'works/distribution.html?id='+data.data[i]['id']+'" class=" bk-fg-darken"><small>详情</small> <i class="fa  fa-pencil"></i></a>';
@@ -278,10 +268,17 @@ function node_callback(data){
 				b+='<tr>';
 				b+='<td>'+(i+1)+'</td>';
 				b+='<td>'+data.data[i]['condition']+'</td>';
-				b+='<td>'+data.data[i]['group']+'</td>';
-				
 				b+='<td>'+data.data[i]['bonus']+'%</td>';
-				
+				b+='<td>'+data.data[i]['spread']+'%</td>';
+				if(data.data[i]['type']==1){
+				b+='<td>静态+动态</td>';	
+				}
+				if(data.data[i]['type']==2){
+				b+='<td>静态</td>';	
+				}
+				if(data.data[i]['type']==3){
+				b+='<td>动态</td>';	
+				}
 				b+='<td>';
 				b+='<a href="'+head_url+'works/node.html?id='+data.data[i]['id']+'" class=" bk-fg-darken"><small>详情</small> <i class="fa  fa-pencil"></i></a>';
 				b+='</td>';

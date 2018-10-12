@@ -205,24 +205,11 @@
 										<div class="col-md-6">
 											<div class="input-group col-sm-7">
 												
-													<input type="text"  class="form-control  must" name="level" value="第[{$data['level']}]代会员" placeholder="请输入层级"  disabled="disabled" />
+													<input type="text"  class="form-control  must" name="level" value="第[{$data['level']}]级" placeholder="请输入层级"  disabled="disabled" />
 												</div>
 												<span class="help-block hide"></span>
 										</div>
-									</div>
-									<div class="form-group">								
-										<label class="col-md-3 control-label">满足直推数</label>
-										<div class="col-md-6">
-											<div class="input-group col-sm-7">
-												<span class="input-group-addon">
-														<i class="fa  fa-tag"></i>
-													</span>
-													<input type="text"  class="form-control must int" name="condition" value="[{$data['condition']}]" placeholder="请输入满足直推数"/>
-												</div>
-												<span class="help-block hide"></span>
-										</div>
-									</div>
-						
+									</div>						
 									<div class="form-group">							
 										<label class="col-md-3 control-label">分红比例（百分比）</label>
 										<div class="col-md-6">
@@ -239,17 +226,17 @@
 												<span class="help-block hide"></span>
 										</div>
 									</div>
-									<div class="form-group">							
-										<label class="col-md-3 control-label">分红类型</label>
+									<div class="form-group">						
+										<label class="col-md-3 control-label">是否烧伤</label>
 										<div class="col-md-6">
 											<div class="input-group col-sm-7">
 												<span class="input-group-addon">
 														<i class="fa  fa-tag"></i>
 													</span>
-													<select class="form-control" name="type">
-													  <option value ="1" <eq name="data.type" value="1">selected</eq>>静态+动态</option>
-													  <option value="2" <eq name="data.type" value="2">selected</eq>>静态</option>
-													  <option value="3" <eq name="data.type" value="3">selected</eq>>动态</option>
+													<select class="form-control" name="burn">
+													  <option value ="1" <eq name="data.burn" value="1">selected</eq>>是</option>
+													  <option value="0" <eq name="data.burn" value="0">selected</eq>>否</option>
+													  
 													</select>
 												</div>
 													

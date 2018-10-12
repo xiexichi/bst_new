@@ -212,27 +212,15 @@
 												<span class="help-block hide"></span>
 										</div>
 									</div>
-									<div class="form-group">								
-										<label class="col-md-3 control-label">满足团队人数</label>
-										<div class="col-md-6">
-											<div class="input-group col-sm-7">
-												<span class="input-group-addon">
-														<i class="fa  fa-tag"></i>
-													</span>
-													<input type="text"  class="form-control must int" name="group" value="[{$data['group']}]" placeholder="请输入满足团队人数"/>
-												</div>
-												<span class="help-block hide"></span>
-										</div>
-									</div>
-						
+									
 									<div class="form-group">							
-										<label class="col-md-3 control-label">分红比例（百分比）</label>
+										<label class="col-md-3 control-label">团队收益（百分比）</label>
 										<div class="col-md-6">
 											<div class="input-group col-sm-7">
 													<span class="input-group-addon">
 														<i class="fa  fa-tag"></i>
 													</span>
-													<input type="text"  class="form-control  must float" name="bonus" value="[{$data['bonus']}]" placeholder="请输入分红比例（百分比）"  />
+													<input type="text"  class="form-control  must float" name="bonus" value="[{$data['bonus']}]" placeholder="请输入团队收益（百分比）"  />
 													<span class="input-group-addon">
 														<i class="fa">%</i>
 													</span>
@@ -241,7 +229,39 @@
 												<span class="help-block hide"></span>
 										</div>
 									</div>
-									
+									<div class="form-group">							
+										<label class="col-md-3 control-label">管理收益（百分比）</label>
+										<div class="col-md-6">
+											<div class="input-group col-sm-7">
+													<span class="input-group-addon">
+														<i class="fa  fa-tag"></i>
+													</span>
+													<input type="text"  class="form-control  must float" name="spread" value="[{$data['spread']}]" placeholder="请输入管理收益（百分比）"  />
+													<span class="input-group-addon">
+														<i class="fa">%</i>
+													</span>
+												</div>
+													
+												<span class="help-block hide"></span>
+										</div>
+									</div>
+									<div class="form-group">							
+										<label class="col-md-3 control-label">分红类型</label>
+										<div class="col-md-6">
+											<div class="input-group col-sm-7">
+												<span class="input-group-addon">
+														<i class="fa  fa-tag"></i>
+													</span>
+													<select class="form-control" name="type">
+													  <option value ="1" <eq name="data.type" value="1">selected</eq>>静态+动态</option>
+													  <option value="2" <eq name="data.type" value="2">selected</eq>>静态</option>
+													  <option value="3" <eq name="data.type" value="3">selected</eq>>动态</option>
+													</select>
+												</div>
+													
+												<span class="help-block hide"></span>
+										</div>
+									</div>	
 									
 								<div class="form-group">								
 									<label class="col-md-3 control-label"></label>

@@ -1681,8 +1681,9 @@ class AdminapiController extends Controller {
         }
         $update_data['update_time']=time();
         $update_data['condition']=$data['condition'];
-        $update_data['group']=$data['group'];
+        $update_data['type']=$data['type'];
         $update_data['bonus']=$data['bonus'];
+        $update_data['spread']=$data['spread'];
         $res=M('node_setup')->where($map)->setField($update_data);
         if($res){
             $ret_arr         = array();
@@ -1711,8 +1712,7 @@ class AdminapiController extends Controller {
             $this->ajaxReturn($ret_arr,'JSON'); 
         }
         $update_data['update_time']=time();
-        $update_data['condition']=$data['condition'];
-        $update_data['type']=$data['type'];
+        $update_data['burn']=$data['burn'];
         $update_data['bonus']=$data['bonus'];
         $res=M('distribution_setup')->where($map)->setField($update_data);
         if($res){

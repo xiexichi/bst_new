@@ -6,4 +6,8 @@ class CoinController extends PublicController {
     	
 		$this->display('page-coin');
 	  }
+	  public function edit(){
+    	
+		$this->display('page-coin-edit');
+	  }
 }

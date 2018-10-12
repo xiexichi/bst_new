@@ -58,7 +58,9 @@ class ApiController extends Controller {
                 case 'quicken':$this->quicken($data);break;
                 case 'community':$this->community($data);break;
                 case 'community_status':$this->community_status($data);break;
-                
+                case 'test':
+                   $this->test();
+                    break;
                 default:
                 $this->display('page-404');break; 
 			}
@@ -219,5 +221,9 @@ class ApiController extends Controller {
         $return   = $Userapi->community($data);
         $this->ajaxReturn($return,'ALL');
     }
-   
+   protected function test(){
+        $Userapi = new \Userapi;
+        $return   = $Userapi->test($data);
+        $this->ajaxReturn($return,'ALL');
+    }
 }

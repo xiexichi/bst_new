@@ -173,7 +173,7 @@ class Userapi {
 		if(empty($list)){
            return $array;
 		}else{
-			if($i<20){
+			if($i<3){
 			$array[$i]=$list;
 			$mobile_list=array_column($list,'mobile');
 			$i=$i+1;
@@ -210,65 +210,99 @@ class Userapi {
     if($retval == "一十") $retval = "十";
     return $retval;
 	}
+	private  function _userParents($userid,$level){
+		if($level==0){
+			return $userid;
+		}else{
+			$where_member['userid']=$userid;
+			$mobile=M('member')->where($where_member)->getField('referee');
+			if(empty($mobile)){
+				return 0;
+			}else{
+				$where_referee['mobile']=$mobile;
+				$member=M('member')->where($where_referee)->find();
+				return $this->_userParents($member['userid'],$level-1);
+			}
+			
+
+		}
+	}
+	protected function _addTransaction($array,$number){
+			$sql_transaction=M('transaction')->add($array);
+			if($sql_transaction){
+					//锁定用户余额
+				if($array['plusminus']==1){
+					$data_memberInfo['total']=$number;
+				}else{
+					$data_memberInfo['lock']=$number;
+				}
+				$data_memberInfo['usable']=$array['surplus'];
+				$data_memberInfo['update_time']=time();
+				$sql_memberInfo=M('member')->where(array('userid'=>$array['userid']))->setField($data_memberInfo);
+					if($sql_memberInfo){
+						$where_transaction['orderid']=$array['orderid'];
+						M('transaction')->where($where_transaction)->setField('status',1);
+						return true;
+					}
+			}
+			return $this->_addTransaction($array);
+	}
     private  function _spreadBonus($orderid){
     		$where_data['orderid']=$orderid;
     		$activate_order=M('activate_order')->where($where_data)->find();
     		if($activate_order){
-    			//是否有推荐人
-    			$where_member['userid']=$activate_order['userid'];
-    			$mobile=M('member')->where($where_member)->getField('referee');
-    			if(empty($mobile)){
-    				return false;
-    			}
-    			//推荐人是否正常
-    			$where_referee['mobile']=$mobile;
-    			$member=M('member')->where($where_referee)->find();
-    			if($member['status']!=1){
-    				return false;
-    			}
-    			//推荐人最大激活单数额
-    			$where_activate_order['userid']=$member['userid'];
-    			$where_activate_order['status']=1;
-    			$max=M('activate_order')->where($where_activate_order)->max('number');
-    			$activate_setup=M('activate_setup')->where(array('id'=>1))->find();
-    			//烧伤
-    			if($activate_setup['burn']==1){
-    				if((float)$activate_order['number']>(float)$max){
-    					$activate_order['number']=$max;
-    				}
-    			}
-    			$number=$activate_order['number']*$activate_setup['spread']/100;
-    			//去除0分润订单
-				if($activate_order['number']<=0){
-    				return false;
-    			}
-		    	//1.新增交易记录（预）
-				$add_transaction['userid']=$member['userid'];
-				$add_transaction['orderid']=get_orderid_chang('transaction');
-				$add_transaction['coin_id']=1;
-				$add_transaction['number']=$number;
-				$add_transaction['type']=4;
-				$add_transaction['plusminus']=1;
-				$add_transaction['status']=-1;
-				$add_transaction['create_time']=time();
-				$add_transaction['style']=1;
-				$add_transaction['surplus']=$member['usable']+$number;
-				$add_transaction['source']=$orderid;
-				$sql_transaction=M('transaction')->add($add_transaction);
-				if($sql_transaction){
-						//锁定用户余额
-					$data_memberInfo['total']=$member['total']+$number;
-					$data_memberInfo['usable']=$member['usable']+$number;
-					$sql_memberInfo=M('member')->where(array('userid'=>$member['userid']))->setField($data_memberInfo);
-						if($sql_memberInfo){
-							$where_transaction['orderid']=$add_transaction['orderid'];
-							M('transaction')->where($where_transaction)->setField('status',1);
-							return true;
-						}
+    			$setup_list=M('distribution_setup')->order('level asc')->select();
+    			if($setup_list){
+    				foreach($setup_list as $key =>$value){
+    					if($value['bonus']<=0){
+    						continue;
+    					}
+    					//获取当前层级用户id
+    					$parent=$this->_userParents($activate_order['userid'],$value['level']);
+    					if($parent>0){
+							//推荐人是否正常
+							$where_referee['userid']=$parent;
+							$member=M('member')->where($where_referee)->find();
+							if($member['status']!=1){
+								continue;
+							}
+
+							//推荐人最大激活单数额
+							$where_activate_order['userid']=$member['userid'];
+							$where_activate_order['status']=1;
+							$max=M('activate_order')->where($where_activate_order)->max('number');
+							
+							//烧伤
+							if($value['burn']==1){
+								if((float)$activate_order['number']>(float)$max){
+									$activate_order['number']=$max;
+								}
+							}
+							$number=$activate_order['number']*$value['bonus']/100;
+							//去除0分润订单
+							if($number<=0){
+								continue;
+							}
+					    	//1.新增交易记录（预）
+							$add_transaction['userid']=$member['userid'];
+							$add_transaction['orderid']=get_orderid_chang('transaction');
+							$add_transaction['coin_id']=1;
+							$add_transaction['number']=$number;
+							$add_transaction['type']=4;
+							$add_transaction['plusminus']=1;
+							$add_transaction['status']=-1;
+							$add_transaction['create_time']=time();
+							$add_transaction['style']=1;
+							$add_transaction['surplus']=$member['usable']+$number;
+							$add_transaction['source']=$orderid;
+							$this->_addTransaction($add_transaction,($member['total']+$number));
+							unset($add_transaction);
+					}else{
+						continue;
+					}
 				}
 			}
-			return $this->_spreadBonus($orderid);
-
+		}
     }
 	public function login($data){
 		/*$data参数			
@@ -1827,11 +1861,12 @@ class Userapi {
             	$ret_arr['errmsg']='已成为社区会员';
            		return $ret_arr;
 			}
-			if($community['status']==2){
+			if(empty($community) || $community['status']==-1){
 				$ret_arr['errno'] = '0';
 		        $ret_arr['errmsg']='SUCCESS';
 		        return $ret_arr;
 			}
+
 		}else{
 			$ret_arr['errno'] = '30002';
             $ret_arr['errmsg']='无效用户，请联系管理员';
