@@ -357,7 +357,7 @@ class Userapi {
 			"identity_imgurl"	身份证图片链接	必填
 
 		*/
-		$keys=array('mobile','password','verification_code','name','identity_card','identity_imgurl');
+		$keys=array('mobile','password','verification_code');
 		$check=$this->_check($data,$keys);
 		if($check){
 			return $check;
@@ -376,8 +376,8 @@ class Userapi {
 		$data_add['mobile']=$data['mobile'];
 		$data_add['password']=ucenter_md5($data['password']);
 		$data_add['nickname']="手机用户:".$data['mobile'];
-		$data_add['identity_card']=$data['identity_card'];
-		$data_add['identity_imgurl']=$data['identity_imgurl'];
+		//$data_add['identity_card']=$data['identity_card'];
+		//$data_add['identity_imgurl']=$data['identity_imgurl'];
 		$data_add['status']=1;
 		$data_add['create_time']=time();
 		$data_add['update_time']=time();
@@ -602,8 +602,10 @@ class Userapi {
         	$end_time=strtotime(date('Y-m-d')." 23:59:59");
         	$where_daily_statistics['create_time'] = array(array('egt',$start_time),array('lt',$end_time),'and');
         	$profit=M('daily_statistics')->where($where_daily_statistics)->sum('number');
+        	$give=M('activate_setup')->where(array('id'=>1))->getField('give');
 			$profit || $profit='0.00';
-			$res['lock']=$lock;
+			$res['lock']=$lock*($give+100)/100;
+			$res['total']=$member['total'];
 			$res['usable']=$member['usable'];
 			$res['profit']=$profit;	
 			$ret_arr         = array();
@@ -1132,22 +1134,32 @@ class Userapi {
 			if($code_check){
 				return $code_check;
 			}
+			$where_coin['status']=1;
+			$where_coin['id']=1;
+			$coin=M('coin')->where($where_coin)->find();
+			if(empty($coin)){
+				$ret_arr['errno'] = '30031';
+       			$ret_arr['errmsg']='不支持的提现币种';
+       			return $ret_arr;
+       		}
 			$member_info=M('member')->where($where_data)->find();
-			if($data['coin_id']==1){
-				if($data['number']>$member_info['usable_eos']){
-					$ret_arr['errno'] = '30009';
-           			$ret_arr['errmsg']='EOS余额不足';
-           			return $ret_arr;
-				}
-				$add_transaction['surplus']=$member_info['usable']-$data['number'];
-				$data_memberInfo['usable']=$member_info['usable']-$data['number'];
-				$data_memberInfo['lock']=$member_info['lock']+$data['number'];
+
+			if($data['number']>$member_info['usable']){
+				$ret_arr['errno'] = '30009';
+       			$ret_arr['errmsg']='EOS余额不足';
+       			return $ret_arr;
 			}
+			$add_transaction['surplus']=$member_info['usable']-$data['number'];
+			$data_memberInfo['usable']=$member_info['usable']-$data['number'];
+			$data_memberInfo['lock']=$member_info['lock']+$data['number'];
+
+
 			//1.新增提现订单（预）
 			$add_assets['userid']=$userid;
 			$add_assets['orderid']=get_orderid_chang('assets');
 			$add_assets['coin_id']=$data['coin_id'];
-			$add_assets['number']=$data['number'];
+			$add_assets['number']=$data['number']/$coin['exchange_rate'];
+			$add_assets['bts']=$data['number'];
 			$add_assets['address']=$data['address'];
 			$add_assets['status']=-1;
 			$add_assets['create_time']=time();

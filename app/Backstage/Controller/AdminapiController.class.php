@@ -1214,41 +1214,33 @@ class AdminapiController extends Controller {
 		$res=M('assets')->where(array('id'=>$data['id']))->save($save);
         if($res){
 			if($data['status']==-1){
-				$member_info=M('member_info')->where(array('userid'=>$asset['userid']))->find();
-				if($asset['coin_id']==1){
-					$data_memberInfo['usable_eos']=$member_info['usable_eos']+$asset['number'];
-					$data_memberInfo['lock_eos']=$member_info['lock_eos']-$asset['number'];
-				}
-				if($asset['coin_id']==2){
-					$data_memberInfo['usable_veth']=$member_info['usable_veth']+$asset['number'];
-					$data_memberInfo['lock_veth']=$member_info['lock_veth']-$asset['number'];
-				}
-			}else if($data['status']==2){
-				if($asset['coin_id']==1){
-					$data_memberInfo['lock_eos']=$member_info['lock_eos']-$asset['number'];
-				}
-				if($asset['coin_id']==2){
-					$data_memberInfo['lock_veth']=$member_info['lock_veth']-$asset['number'];
-				}
-			}
-			$sql_memberInfo=M('member_info')->where(array('userid'=>$asset['userid']))->setField($data_memberInfo);
-			if($sql_memberInfo){
-				$ret_arr           = array();
-				$ret_arr['errno']  = '0';
-				$ret_arr['errmsg'] = 'SUCCESS';
-				$this->ajaxReturn($ret_arr,'JSON');
+				$member_info=M('member')->where(array('userid'=>$asset['userid']))->find();
+				$data_memberInfo['usable']=$member_info['usable']+$asset['bst'];
+				$data_memberInfo['lock']=$member_info['lock']-$asset['bst'];
+			 $sql_memberInfo=M('member')->where(array('userid'=>$asset['userid']))->setField($data_memberInfo);
+    			if($sql_memberInfo){
+    				$ret_arr           = array();
+    				$ret_arr['errno']  = '0';
+    				$ret_arr['errmsg'] = 'SUCCESS';
+    				$this->ajaxReturn($ret_arr,'JSON');
+                }else{
+                $ret_arr           = array();
+                $ret_arr['errno']  = '400';
+                $ret_arr['errmsg'] = '系统级错误，请联系管理员';
+                $this->ajaxReturn($ret_arr,'JSON');   
+                } 
+            }else{
+                $ret_arr           = array();
+                $ret_arr['errno']  = '0';
+                $ret_arr['errmsg'] = 'SUCCESS';
+                $this->ajaxReturn($ret_arr,'JSON');
+            }
 			}else{
 				$ret_arr           = array();
 				$ret_arr['errno']  = '400';
 				$ret_arr['errmsg'] = '系统级错误，请联系管理员';
 				$this->ajaxReturn($ret_arr,'JSON');   
 			}
-		}else{
-			$ret_arr           = array();
-			$ret_arr['errno']  = '400';
-			$ret_arr['errmsg'] = '系统级错误，请联系管理员';
-			$this->ajaxReturn($ret_arr,'JSON');    
-        }
     }
 	/*
 	 * 方法名:admin_category_del

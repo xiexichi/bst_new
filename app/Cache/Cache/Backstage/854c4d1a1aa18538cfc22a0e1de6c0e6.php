@@ -351,7 +351,7 @@
 		
 		<!-- Pages JS -->
 		<script src="/bst/template/Npts/assets/public/js/ajax.js?v=1.1"></script>
-		<script src="/bst/template/Npts/assets/js/pages/asset-edit.js"></script>
+		<script src="/bst/template/Npts/assets/js/pages/edit.js"></script>
 		
 		<!-- end: JavaScript-->
 		
