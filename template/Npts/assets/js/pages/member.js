@@ -38,7 +38,7 @@ function in_callback(data){
 				b+='<tr>';
 				b+='<td>'+(i+1)+'</td>';
 				b+='<td>'+data.data[i]['nickname']+'</td>';
-				b+='<td><img style="width:50px" src="'+data.data[i]['head_imgurl']+'"/></td>';
+				b+='<td>'+data.data[i]['mobile']+'</td>';
 				b+='<td>'+data.data[i]['create_time']+'</td>';
 				if(data.edit_auth){
 					$('#edit_auth').removeClass('hide');

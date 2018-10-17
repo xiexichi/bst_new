@@ -65,7 +65,9 @@ class AdminapiController extends Controller {
                 
                 case 'admin_quicken_setup_list_edit':$this->admin_quicken_setup_list_edit($data);break;
                 case 'admin_mail_list':$this->admin_mail_list($data);break;
-                 case 'admin_mail_success':$this->admin_mail_success($data);break;
+                case 'admin_mail_success':$this->admin_mail_success($data);break;
+                 case 'admin_coin_edit':$this->admin_coin_edit($data);break;
+               
 
 			}
 		}
@@ -87,7 +89,7 @@ class AdminapiController extends Controller {
                 case 'admin_node_setup_list':$this->admin_node_setup_list($data);break;
                 case 'admin_quicken_setup_list':$this->admin_quicken_setup_list($data);break;
                 case 'admin_mail_del':$this->admin_mail_del($data);break;
-               
+                case 'admin_coin_del':$this->admin_coin_del($data);break;
             }
         }
         $this->display('page-404');
@@ -372,7 +374,12 @@ class AdminapiController extends Controller {
             $map['create_time']=array('elt',$end);
             }
         }
-
+        if($data['nickname']){
+            $map['nickname']=array('in',$data['nickname']);
+        }
+        if($data['mobile']){
+            $map['mobile']=array('in',$data['mobile']);
+        }
         $lists=M('member')->where($map)->order('create_time desc')->limit(10)->page($data['page'])->select();
         
         if($lists){
@@ -1760,6 +1767,8 @@ class AdminapiController extends Controller {
         if($lists){
             foreach ($lists as $key => $value) {
                 $lists[$key]['mobile']=M('member')->where(array('userid'=>$value['userid']))->getField('mobile');
+                 $lists[$key]['coin_name']=M('coin')->where(array('id'=>$value['coin_id']))->getField('name');
+
             }
             $ret_arr         = array();
                 $ret_arr['errno'] = '0';
@@ -2302,5 +2311,66 @@ class AdminapiController extends Controller {
             $this->ajaxReturn($ret_arr,'JSON');    
         }
     } 
+    /*
+     * 方法名:admin_role_del
+     * 功能：删除角色
+     * 传入参数:id(必填) 角色id
+     * 返回参数:成功状态码
+     */
+    protected function admin_coin_del($data){
+        $this->_userAuth();
+        $keys=array('id');
+        $this->_check($data,$keys);
+        $map['id']=$data['id'];
+        $res=M('coin')->where($map)->setField('status',-1);
+        if($res){
+            $ret_arr         = array();
+            $ret_arr['errno'] = '0';
+            $ret_arr['errmsg']='SUCCESS';
+            $this->ajaxReturn($ret_arr,'JSON');
+        }else{
+            $ret_arr         = array();
+            $ret_arr['errno'] = '400';
+            $ret_arr['errmsg']='系统级错误，请联系管理员';
+            $this->ajaxReturn($ret_arr,'JSON');    
+        }
+    }
+    /*
+     * 方法名:admin_role_del
+     * 功能：删除角色
+     * 传入参数:id(必填) 角色id
+     * 返回参数:成功状态码
+     */
+    protected function admin_coin_edit($data){
+        $this->_userAuth();
+        if($data['id']){
+            $map['id']=$data['id'];
+            $update['name']=$data['name'];
+            $update['exchange_rate']=$data['exchange_rate'];
+            $update['address']=$data['address'];
+            $update['select_link']=$data['select_link'];
+            $update['update_time']=time();
+            $res=M('coin')->where($map)->setField($update);
+        }else{
+            $add['name']=$data['name'];
+            $add['exchange_rate']=$data['exchange_rate'];
+            $add['address']=$data['address'];
+            $add['select_link']=$data['select_link'];
+            $add['create_time']=time();
+            $add['update_time']=time();
+            $res=M('coin')->add($add);
+        }
+        if($res){
+            $ret_arr         = array();
+            $ret_arr['errno'] = '0';
+            $ret_arr['errmsg']='SUCCESS';
+            $this->ajaxReturn($ret_arr,'JSON');
+        }else{
+            $ret_arr         = array();
+            $ret_arr['errno'] = '400';
+            $ret_arr['errmsg']='系统级错误，请联系管理员';
+            $this->ajaxReturn($ret_arr,'JSON');    
+        }
+    }
     
 }

@@ -33,11 +33,7 @@ function in_callback(data){
 				b+='<td>'+data.data[i]['orderid']+'</td>';
 				b+='<td>'+data.data[i]['mobile']+'</td>';
 				b+='<td>'+data.data[i]['number']+'</td>';
-				if(data.data[i]['coin_id']==1){
-				b+='<td>EOS</td>';
-				}else{
-					b+='<td>VETH</td>';
-				}
+				b+='<td>'+data.data[i]['coin_name']+'</td>';
 				b+='<td>'+data.data[i]['surplus']+'</td>';
 				b+='<td>'+data.data[i]['time']+'</td>';
 				

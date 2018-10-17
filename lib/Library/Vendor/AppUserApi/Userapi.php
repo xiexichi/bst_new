@@ -1236,7 +1236,7 @@ class Userapi {
 			$member_info=M('member')->where($where_data)->find();
 			$consignee_info=M('member')->where($where_consignee)->find();
 			if($data['coin_id']==1){
-				if($data['number']>$member_info['usable_eos']){
+				if($data['number']>$member_info['usable']){
 					$ret_arr['errno'] = '30009';
            			$ret_arr['errmsg']='余额不足';
            			return $ret_arr;

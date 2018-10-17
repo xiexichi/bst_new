@@ -218,6 +218,17 @@
 										</div>
 										</div>
 										<div class="form-group">
+										<label class="col-md-3 control-label">会员资产</label>
+										<div class="col-md-9">
+										<p class="form-control-static">可用BST:<?php echo ($data["usable"]); ?></p>
+										<p class="form-control-static">在投BST:<?php echo ($order_money); ?></p>
+										<?php if(is_array($coin)): foreach($coin as $key=>$value): ?><p class="form-control-static"><?php echo ($value["name"]); ?>:<?php echo ($value["usable"]); ?>
+										</p><?php endforeach; endif; ?>
+										<p class="form-control-static">最新充值:<?php echo ($data["number"]); ?></p>
+										<p class="form-control-static">最新绩效:<?php echo ($sum_number); ?></p>
+										</div>
+									</div>
+										<div class="form-group">
 										<div class="col-md-9">
 										<label class="col-md-3 control-label"></label>
 										<?php if(($data["status"]) == "1"): ?><input type="text"  name="status" value="-1" class="hide"> 

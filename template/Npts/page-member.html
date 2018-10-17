@@ -208,6 +208,14 @@
 											</div>
 										</div>
 										<div class="form-group">
+											<label for="tags-input-multiple" class="col-md-3 control-label">手机号码（可多值）</label>
+											<div class="col-md-7">
+												<select name="mobile[]" id="Mobile" multiple data-role="tagsinput" data-tag-class="label label-primary">
+													
+												</select>
+											</div>
+										</div>
+										<div class="form-group">
 											<label class="col-md-3 control-label">报名时间</label>
 											<div class="col-md-6">
 												<div class="input-daterange input-group" data-plugin-datepicker>
@@ -248,8 +256,8 @@
 														#
 													</th>
 													<th>会员昵称</th>
-													<th>会员头像</th>
-													<th>报名时间</th>
+													<th>会员手机</th>
+													<th>注册时间</th>
 													<th id="edit_auth" class="hide">操作</th>
 												</tr>
 											</thead>

@@ -232,7 +232,7 @@
 								
 								</div>										
 								<div class="panel-body">
-									<a class="btn btn-primary click" style="float: right" href="banner/edit.html" >新增币</a>
+									<a class="btn btn-primary click" style="float: right" href="coin/edit.html" >新增币</a>
 									<div class="table-responsive">
 										<table class="table table-hover">
 											<thead>

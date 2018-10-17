@@ -218,6 +218,19 @@
 										</div>
 										</div>
 										<div class="form-group">
+										<label class="col-md-3 control-label">会员资产</label>
+										<div class="col-md-9">
+										<p class="form-control-static">可用BST:[{$data.usable}]</p>
+										<p class="form-control-static">在投BST:[{$order_money}]</p>
+										<foreach name="coin" item="value">
+										<p class="form-control-static">[{$value.name}]:[{$value.usable}]
+										</p>
+										</foreach>
+										<p class="form-control-static">最新充值:[{$data.number}]</p>
+										<p class="form-control-static">最新绩效:[{$sum_number}]</p>
+										</div>
+									</div>
+										<div class="form-group">
 										<div class="col-md-9">
 										<label class="col-md-3 control-label"></label>
 										<eq name="data.status" value="1">

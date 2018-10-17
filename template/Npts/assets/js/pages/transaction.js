@@ -74,7 +74,7 @@ function in_callback(data){
 					b+='<td>-'+data.data[i]['number']+'</td>';
 				}
 				b+='<td>'+data.data[i]['usernickname']+'</td>';
-				b+='<td>'+data.data[i]['coin_type']+'</td>';
+				b+='<td>BST</td>';
 				switch(data.data[i]['type']){
 					case '1': 
 						b+='<td>激活</td>'; 
@@ -92,23 +92,18 @@ function in_callback(data){
 						b+='<td>利息</td>'; 
 						switch(data.data[i]['style']){
 							case '1': 
-								b+='<td>注册红包</td>'; 
+								b+='<td>层级奖励</td>'; 
 							break;
 							case '2': 
-								b+='<td>签到奖励</td>'; 
-							break;
-							case '3': 
-								b+='<td>推荐奖励</td>'; 
-							break;
-							case '4': 
 								b+='<td>管理奖励</td>'; 
 							break;
-							case '5': 
-								b+='<td>领导奖励</td>'; 
+							case '3': 
+								b+='<td>团队奖励</td>'; 
 							break;
-							case '6': 
+							case '4': 
 								b+='<td>静态奖励</td>'; 
 							break;
+							
 							default :
 								b+='<td>-</td>'; 
 							break;

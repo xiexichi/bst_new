@@ -7,7 +7,7 @@
 		<!-- Basic -->
     	<meta charset="UTF-8" />
 
-		<title>充币详情</title>
+		<title>充详情</title>
 		
 		<!-- Mobile Metas -->
 	    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
@@ -181,7 +181,7 @@
 							<ol class="breadcrumb visible-sm visible-md visible-lg">								
 								<li><a href="index.html"><i class="icon fa fa-home"></i>管理后台</a></li>
 								<li class="active"><i class="fa fa-picture-o"></i>推广设置</li>
-								<li class="active">激活卡设置</li>
+								<li class="active">币设置</li>
 								<li>设置详情</li>
 							</ol>						
 						</div>
@@ -201,84 +201,57 @@
 								<div class="panel-body">
 									<div class="form-group">
 										<input type="text"  class="form-control hide" name="id" value="[{$_GET['id']}]"/>								
-										<label class="col-md-3 control-label">赠送比例（百分比）</label>
+										<label class="col-md-3 control-label">名称</label>
 										<div class="col-md-6">
 											<div class="input-group col-sm-7">
 													<span class="input-group-addon">
 														<i class="fa  fa-tag"></i>
 													</span>
-													<input type="text"  class="form-control  must float" name="give" value="[{$data['give']}]" placeholder="请输入赠送比例（百分比）"  />
-													<span class="input-group-addon">
-														<i class="fa">%</i>
-													</span>
+													<input type="text"  class="form-control  must" name="name" value="[{$data['name']}]" placeholder="请输币的名称"  />
+												
 												</div>
 													
 												<span class="help-block hide"></span>
 										</div>
 									</div>
 									<div class="form-group">
-										<input type="text"  class="form-control hide" name="id" value="[{$_GET['id']}]"/>								
-										<label class="col-md-3 control-label">最终获得比例（百分比）</label>
+										
+										<label class="col-md-3 control-label">汇率</label>
 										<div class="col-md-6">
 											<div class="input-group col-sm-7">
 													<span class="input-group-addon">
 														<i class="fa  fa-tag"></i>
 													</span>
-													<input type="text"  class="form-control  must float" name="finally" value="[{$data['finally']}]" placeholder="请输入最终获得比例（百分比）"  />
-													<span class="input-group-addon">
-														<i class="fa">%</i>
-													</span>
+													<input type="text"  class="form-control  must float" name="exchange_rate" value="[{$data['exchange_rate']}]" placeholder="请输入汇率"  />
+													
 												</div>
 													
 												<span class="help-block hide"></span>
 										</div>
 									</div>
 									<div class="form-group">
-										<input type="text"  class="form-control hide" name="id" value="[{$_GET['id']}]"/>								
-										<label class="col-md-3 control-label">每日释放率（百分比）</label>
+										<label class="col-md-3 control-label">钱包地址</label>
 										<div class="col-md-6">
 											<div class="input-group col-sm-7">
 													<span class="input-group-addon">
 														<i class="fa  fa-tag"></i>
 													</span>
-													<input type="text"  class="form-control  must float" name="everyday" value="[{$data['everyday']}]" placeholder="请输入每日释放率（百分比）"  />
-													<span class="input-group-addon">
-														<i class="fa">%</i>
-													</span>
+													<input type="text"  class="form-control  must" name="address" value="[{$data['address']}]" placeholder="请输入钱包地址"  />
+													
 												</div>
 													
 												<span class="help-block hide"></span>
 										</div>
 									</div>
-									<div class="form-group">
-										<input type="text"  class="form-control hide" name="id" value="[{$_GET['id']}]"/>								
-										<label class="col-md-3 control-label">直推分红比例（百分比）</label>
+									<div class="form-group">	
+										<label class="col-md-3 control-label">记录查询接口</label>
 										<div class="col-md-6">
 											<div class="input-group col-sm-7">
 													<span class="input-group-addon">
 														<i class="fa  fa-tag"></i>
 													</span>
-													<input type="text"  class="form-control  must float" name="spread" value="[{$data['spread']}]" placeholder="请输入直推分红比例（百分比）"  />
-													<span class="input-group-addon">
-														<i class="fa">%</i>
-													</span>
-												</div>
+													<input type="text"  class="form-control  must" name="select_link" value="[{$data['select_link']}]" placeholder="请输入记录查询接口"  />
 													
-												<span class="help-block hide"></span>
-										</div>
-									</div>
-									<div class="form-group">							
-										<label class="col-md-3 control-label">是否烧伤</label>
-										<div class="col-md-6">
-											<div class="input-group col-sm-7">
-												<span class="input-group-addon">
-														<i class="fa  fa-tag"></i>
-													</span>
-													<select class="form-control" name="burn">
-													  <option value ="1" <eq name="data.burn" value="1">selected</eq>>是</option>
-													  <option value="0" <eq name="data.burn" value="0">selected</eq>>否</option>
-													  
-													</select>
 												</div>
 													
 												<span class="help-block hide"></span>
@@ -288,7 +261,7 @@
 									<label class="col-md-3 control-label"></label>
 									<div class="col-md-9">
 						
-									<a href="adminapi.html?url=admin_activate_setup_edit" class="btn btn-success ajax-post"  target-form="myform" callback="edit_callback">保存编辑</a>
+									<a href="adminapi.html?url=admin_coin_edit" class="btn btn-success ajax-post"  target-form="myform" callback="edit_callback">保存编辑</a>
 									<div class="radio-custom radio-inline"></div>
 									
 									<a href="javascript:history.back(-1)" class="btn btn-warning" >返回列表</a>
